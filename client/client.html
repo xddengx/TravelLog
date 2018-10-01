@@ -1,0 +1,184 @@
+<!doctype <!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Travel Log</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="/style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.min.js"></script>
+    <script type="text/babel">
+      const parseJSON = (xhr, content) => {
+        //parse response (obj will be empty in a 204 updated)
+        const obj = JSON.parse(xhr.response);
+        console.dir(obj);   
+        
+        let keys = Object.keys(obj);
+          for(let i = 0; i < keys.length-1;i++){
+            console.log(obj[keys[i]]);
+          }
+        
+        //if message in response, add to screen
+        if(obj.message) {
+          const p = document.createElement('p');
+          p.textContent = `Message: ${obj.message}`;
+          content.appendChild(p);
+        }
+        
+        //if logs in response, add to screen
+        if(obj.logs) {
+          // const logsList = document.createElement('p');
+          // const logs = JSON.stringify(obj.logs);
+          // logsList.textContent = logs;
+          // content.appendChild(logsList);
+        }
+      };
+
+      const handleResponse = (xhr, parseResponse) =>{
+      const content = document.querySelector('#content');
+      switch(xhr.status){
+        case 200:
+          content.innerHTML = '<b>Success</b>';
+          break;
+        case 201:
+          content.innerHTML = '<b> Create</b>';
+          break;
+        case 204:
+          content.innerHTML = '<b> Updated(No Content)</b>';
+          return;
+        case 400:
+          content.innerHTML = '<b> Bad Request </b>';
+          break;
+        case 404: //if not found
+          content.innerHTML = `<b>Resource Not Found</b>`;
+          break;
+        default: //any other status
+          content.innerHTML = `Error code not implemented by client.`;
+          break;
+      }
+      
+      if(parseResponse){
+        parseJSON(xhr, content);
+      }
+    };
+
+      const sendPost = (e,logForm) =>{
+        // get logForm action 
+        const nameAction = logForm.getAttribute('action');
+        const nameMethod = logForm.getAttribute('method');
+
+        // grab the fields 
+        let logInputs = document.forms['logForm'].getElementsByTagName('input');
+        
+        // create a new AJAX request 
+        const xhr = new XMLHttpRequest();
+        // set the method (POST) and url (action attribute from log form)
+        xhr.open(nameMethod, nameAction);
+
+        // set request to x-www-form-urlencoded
+        // same format as query string key=value&key2=value2
+        xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+        //set our requested response type as JSON response
+        xhr.setRequestHeader ('Accept', 'application/json');
+
+        // set function to handle the response
+        xhr.onload = () => handleResponse(xhr, true);
+
+        let formData;
+        for(let i = 0; i < logInputs.length-1; i++){
+          formData = `startDate=${logInputs[0].value}&endDate=${logInputs[1].value}&destination=${logInputs[2].value}&carrier=${logInputs[3].value}&currency=${logInputs[4].value}&expenses=${logInputs[5].value}&sites=${logInputs[6].value}`;
+        }
+        // send our request with the data
+        xhr.send(formData);
+
+        //prevent the browser's default action (to send the form on its own)
+        e.preventDefault();
+        //return false to prevent the browser from trying to change page
+        return false;
+      };
+
+      const requestLog = (e, storedForm) =>{
+        const searchSelect = storedForm.querySelector('#searchSelect').value;
+        console.log(searchSelect);
+        // crate a new AJAX request
+        const xhr = new XMLHttpRequest();
+        if(searchSelect == '/allLogs'){
+          xhr.open('GET', searchSelect);
+
+          xhr.setRequestHeader('Accept', 'application/json');
+
+          //set onload to parse request and get json message
+          xhr.onload = () => handleResponse(xhr,true);
+
+          //send ajax request
+          xhr.send();
+
+          //cancel browser's default action
+          e.preventDefault();
+          //return false to prevent page redirection from a form
+          return false;
+        }
+      };
+
+      const init = () =>{
+        const logForm = document.querySelector('#logForm'); // get add log form
+        const storedForm = document.querySelector('#storedForm'); // get stored log form
+
+        // create log
+        const addLog = (e) => sendPost(e, logForm);
+
+        // get Log
+        const getLog = (e) => requestLog(e, storedForm);
+        
+        logForm.addEventListener('submit', addLog);
+        storedForm.addEventListener('submit', getLog);
+      };
+
+      window.onload = init;
+    </script>
+</head>
+<body>
+    <section id="top">
+    <h3>New log entry</h3>
+    <form id="logForm" action="/addLog" method="post">
+      <label for="startDate">Travel Start Date: </label>
+      <input id="startDateField" type="text" name="startDate"/>
+      <br>
+      <label for="endDate">Travel End Date: </label>
+      <input id="endDateField" type="text" name="endDate" />
+      <br>
+      <label for="destination">Destination: </label>
+      <input id="destinationField" type="text" name="destination" />
+      <br>
+      <label for="carrier">Air Carrier: </label>
+      <input id="carrierField" type="text" name="carrier" />
+      <br>
+      <label for="currency">Currency: </label>
+      <input id="currencyField" type="text" name="currency" />
+      <br>
+      <label for="expenses">Total Expenses: </label>
+      <input id="expensesField" type="text" name="expenses" />
+      <br>
+      <label for="sites">Sites Visited: </label>
+      <input id="sitesField" type="text" name="sites" />
+      <br>
+      <input type="submit" value="Add Log" />
+    </form>
+  </section>
+  <section id="content">
+  </section>
+
+  <!--GET LOGS-->
+  <section id="storedLogs">
+    <p> Search for previous logs</p>
+      <form id="storedForm" action="/getLog" method="get">
+        <select id='searchSelect'>
+          <option value='/allLogs'>All logs</option>
+          <option value='/destination'>Destination</option>
+        </select>
+        <!-- <input id ="specificDestination" type = "text" name="spDestination" placeholder="Destination"/> -->
+        <input type="submit" value="Get Logs" />
+      </form>
+  </section>
+</body>
+</html>
