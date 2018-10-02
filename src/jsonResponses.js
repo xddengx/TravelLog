@@ -44,7 +44,7 @@ const addLog = (request, response, body) => {
 
   let responseCode = 201;
 
-  //&& logs[body.endDate] && logs[body.destination]
+  // && logs[body.endDate] && logs[body.destination]
   if (logs[body.destination]) {
     responseCode = 204;
   } else {
@@ -61,7 +61,7 @@ const addLog = (request, response, body) => {
   logs[body.destination].expenses = body.expenses;
   logs[body.destination].sites = body.sites;
 
-//   console.dir(logs[body.startDate]);
+  //   console.dir(logs[body.startDate]);
 
   if (responseCode === 201) {
     jsonResponse.message = 'Log Created Successfully';
