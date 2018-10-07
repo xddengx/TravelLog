@@ -1,6 +1,6 @@
 "use strict";
 
-const parseJSON = (xhr, content) => {
+const parseJSON = (xhr, notification) => {
         //parse response (obj will be empty in a 204 updated)
         const obj = JSON.parse(xhr.response);
         // console.dir(obj);   
@@ -9,56 +9,82 @@ const parseJSON = (xhr, content) => {
         if(obj.message) {
           const p = document.createElement('p');
           p.textContent = `Message: ${obj.message}`;
-          content.appendChild(p);
-        }
-        
-        let keys = Object.keys(obj); //returns logs (obj.logs)
-        for(let i = 0; i < keys.length;i++){
-          console.log(obj[keys[0]]);
-
+          notification.appendChild(p);
         }
 
+        const destination = obj.logs;
         // if logs in response, add to screen
-        if(obj.logs) {
-          let keys = Object.keys(obj);
-          
-          for(let i = 0; i < keys.length;i++){
-            console.log(obj[keys[i]]);
+        if(destination) {
+          let keys = Object.keys(destination);
+          console.log("keys", keys); // returns just San Francisco
 
-              const logsList = document.createElement('p');
-              const logs = JSON.stringify(obj[keys[i]]);
-              logsList.textContent = logs;
-              content.appendChild(logsList);
+          for(let i = 0; i < keys.length;i++){
+            let attributes = obj.logs[keys[i]]; // returns the structure
+            console.log("attributes", attributes);
+
+            let card = document.createElement('div');
+            let cssString = "background: aliceblue; padding: 30px; width: 30%; float: left; margin: 10px;";
+            card.style.cssText = cssString;
+
+            for(let key in attributes){
+              // console.log(key, attributes[key]);
+              const cardInfo = document.createElement('p');
+              cardInfo.style.fontSize = "19px";
+              cardInfo.textContent = key.charAt(0).toUpperCase() + key.slice(1) + ": " + attributes[key];
+              card.appendChild(cardInfo);
+              content.appendChild(card);
+
+            }
+
+            // for(let k = 0; k < attributes.length; k++){
+            //   const logInfo = document.createElement('p');
+            //   let details = JSON.stringify(attributes);
+            //   logInfo.textContent = details;
+            //   content.appendChild(logInfo);
+            // }
+            // for(let k = 0; k < )
+            // const logsList = document.createElement('p');
+            // const logs = obj.logs[keys[i]]
+            // logsList.textContent = logs;
+            // content.appendChild(logsList);
+
+                //   if(obj.users) {
+    //     connsole.log(obj.users);
+    //     const userList = document.createElement('p');
+    //     const users = JSON.stringify(obj.users);
+    //     userList.textContent = users;
+    //     content.appendChild(userList);
+    //   }
               
           }
         }
       };
 
       const handleResponse = (xhr, parseResponse) =>{
-      const content = document.querySelector('#content');
+      const notification = document.querySelector('#notification');
       switch(xhr.status){
         case 200:
-          content.innerHTML = '<b>Success</b>';
+        notification.innerHTML = '<b>Success</b>';
           break;
         case 201:
-          content.innerHTML = '<b> Create</b>';
+        notification.innerHTML = '<b> Create</b>';
           break;
         case 204:
-          content.innerHTML = '<b> Updated(No Content)</b>';
+        notification.innerHTML = '<b> Updated(No Content)</b>';
           return;
         case 400:
-          content.innerHTML = '<b> Bad Request </b>';
+        notification.innerHTML = '<b> Bad Request </b>';
           break;
         case 404: //if not found
-          content.innerHTML = `<b>Resource Not Found</b>`;
+        notification.innerHTML = `<b>Resource Not Found</b>`;
           break;
         default: //any other status
-          content.innerHTML = `Error code not implemented by client.`;
+        notification.innerHTML = `Error code not implemented by client.`;
           break;
       }
       
       if(parseResponse){
-        parseJSON(xhr, content);
+        parseJSON(xhr, notification);
       }
     };
 
@@ -84,6 +110,9 @@ const parseJSON = (xhr, content) => {
         // set function to handle the response
         xhr.onload = () => handleResponse(xhr, true);
 
+        // increment log number everytime addLog is clicked. Does not increment if log # already exists
+        // if()
+
         let formData;
         for(let i = 0; i < logInputs.length-1; i++){
           formData = `startDate=${logInputs[0].value}&endDate=${logInputs[1].value}&destination=${logInputs[2].value}&carrier=${logInputs[3].value}&currency=${logInputs[4].value}&expenses=${logInputs[5].value}&sites=${logInputs[6].value}`;
@@ -99,7 +128,6 @@ const parseJSON = (xhr, content) => {
 
       const requestLog = (e, storedForm) =>{
         const searchSelect = storedForm.querySelector('#searchSelect').value;
-        console.log(searchSelect);
         // crate a new AJAX request
         const xhr = new XMLHttpRequest();
         if(searchSelect == '/allLogs'){

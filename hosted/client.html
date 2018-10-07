@@ -12,6 +12,9 @@
     <section id="top">
     <h3>New log entry</h3>
     <form id="logForm" action="/addLog" method="post">
+      <!-- <label for="logNum">Log number: </label>
+      <input id="logNumField" type="text" name="logNum"/>
+      <br> -->
       <label for="startDate">Travel Start Date: </label>
       <input id="startDateField" type="text" name="startDate"/>
       <br>
@@ -36,7 +39,9 @@
       <input type="submit" value="Add Log" />
     </form>
   </section>
-  <section id="content">
+
+  <section id="notification">
+    <h1> User notification</h1>
   </section>
 
   <!--GET LOGS-->
@@ -50,6 +55,9 @@
         <input id ="specificDestination" type = "text" name="spDestination" placeholder="Destination"/>
         <input type="submit" value="Get Logs" />
       </form>
+  </section>
+
+  <section id="content">
   </section>
 </body>
 </html>

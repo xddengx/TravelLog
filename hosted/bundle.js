@@ -1,6 +1,6 @@
 "use strict";
 
-var parseJSON = function parseJSON(xhr, content) {
+var parseJSON = function parseJSON(xhr, notification) {
   //parse response (obj will be empty in a 204 updated)
   var obj = JSON.parse(xhr.response);
   // console.dir(obj);   
@@ -8,57 +8,83 @@ var parseJSON = function parseJSON(xhr, content) {
   //if message in response, add to screen
   if (obj.message) {
     var p = document.createElement('p');
-    p.textContent = 'Message: ' + obj.message;
-    content.appendChild(p);
+    p.textContent = "Message: " + obj.message;
+    notification.appendChild(p);
   }
 
-  var keys = Object.keys(obj); //returns logs (obj.logs)
-  for (var i = 0; i < keys.length; i++) {
-    console.log(obj[keys[0]]);
-  }
-
+  var destination = obj.logs;
   // if logs in response, add to screen
-  if (obj.logs) {
-    var _keys = Object.keys(obj);
+  if (destination) {
+    var keys = Object.keys(destination);
+    console.log("keys", keys); // returns just San Francisco
 
-    for (var _i = 0; _i < _keys.length; _i++) {
-      console.log(obj[_keys[_i]]);
+    for (var i = 0; i < keys.length; i++) {
+      var attributes = obj.logs[keys[i]]; // returns the structure
+      console.log("attributes", attributes);
 
-      var logsList = document.createElement('p');
-      var logs = JSON.stringify(obj[_keys[_i]]);
-      logsList.textContent = logs;
-      content.appendChild(logsList);
+      var card = document.createElement('div');
+      var cssString = "background: aliceblue; padding: 30px; width: 30%; float: left; margin: 10px;";
+      card.style.cssText = cssString;
+
+      for (var key in attributes) {
+        // console.log(key, attributes[key]);
+        var cardInfo = document.createElement('p');
+        cardInfo.style.fontSize = "19px";
+        cardInfo.textContent = key.charAt(0).toUpperCase() + key.slice(1) + ": " + attributes[key];
+        card.appendChild(cardInfo);
+        content.appendChild(card);
+      }
+
+      // for(let k = 0; k < attributes.length; k++){
+      //   const logInfo = document.createElement('p');
+      //   let details = JSON.stringify(attributes);
+      //   logInfo.textContent = details;
+      //   content.appendChild(logInfo);
+      // }
+      // for(let k = 0; k < )
+      // const logsList = document.createElement('p');
+      // const logs = obj.logs[keys[i]]
+      // logsList.textContent = logs;
+      // content.appendChild(logsList);
+
+      //   if(obj.users) {
+      //     connsole.log(obj.users);
+      //     const userList = document.createElement('p');
+      //     const users = JSON.stringify(obj.users);
+      //     userList.textContent = users;
+      //     content.appendChild(userList);
+      //   }
     }
   }
 };
 
 var handleResponse = function handleResponse(xhr, parseResponse) {
-  var content = document.querySelector('#content');
+  var notification = document.querySelector('#notification');
   switch (xhr.status) {
     case 200:
-      content.innerHTML = '<b>Success</b>';
+      notification.innerHTML = '<b>Success</b>';
       break;
     case 201:
-      content.innerHTML = '<b> Create</b>';
+      notification.innerHTML = '<b> Create</b>';
       break;
     case 204:
-      content.innerHTML = '<b> Updated(No Content)</b>';
+      notification.innerHTML = '<b> Updated(No Content)</b>';
       return;
     case 400:
-      content.innerHTML = '<b> Bad Request </b>';
+      notification.innerHTML = '<b> Bad Request </b>';
       break;
     case 404:
       //if not found
-      content.innerHTML = '<b>Resource Not Found</b>';
+      notification.innerHTML = "<b>Resource Not Found</b>";
       break;
     default:
       //any other status
-      content.innerHTML = 'Error code not implemented by client.';
+      notification.innerHTML = "Error code not implemented by client.";
       break;
   }
 
   if (parseResponse) {
-    parseJSON(xhr, content);
+    parseJSON(xhr, notification);
   }
 };
 
@@ -86,9 +112,12 @@ var sendPost = function sendPost(e, logForm) {
     return handleResponse(xhr, true);
   };
 
+  // increment log number everytime addLog is clicked. Does not increment if log # already exists
+  // if()
+
   var formData = void 0;
   for (var i = 0; i < logInputs.length - 1; i++) {
-    formData = 'startDate=' + logInputs[0].value + '&endDate=' + logInputs[1].value + '&destination=' + logInputs[2].value + '&carrier=' + logInputs[3].value + '&currency=' + logInputs[4].value + '&expenses=' + logInputs[5].value + '&sites=' + logInputs[6].value;
+    formData = "startDate=" + logInputs[0].value + "&endDate=" + logInputs[1].value + "&destination=" + logInputs[2].value + "&carrier=" + logInputs[3].value + "&currency=" + logInputs[4].value + "&expenses=" + logInputs[5].value + "&sites=" + logInputs[6].value;
   }
   // send our request with the data
   xhr.send(formData);
@@ -101,7 +130,6 @@ var sendPost = function sendPost(e, logForm) {
 
 var requestLog = function requestLog(e, storedForm) {
   var searchSelect = storedForm.querySelector('#searchSelect').value;
-  console.log(searchSelect);
   // crate a new AJAX request
   var xhr = new XMLHttpRequest();
   if (searchSelect == '/allLogs') {
