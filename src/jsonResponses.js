@@ -45,21 +45,22 @@ const addLog = (request, response, body) => {
   let responseCode = 201;
 
   // && logs[body.endDate] && logs[body.destination]
-  if (logs[body.destination]) {
+  if (logs[body.logNum]) {
     responseCode = 204;
   } else {
     // create new log
-    logs[body.destination] = {};
+    logs[body.logNum] = {};
   }
 
   // adding/updating logs
-  logs[body.destination].startDate = body.startDate;
-  logs[body.destination].endDate = body.endDate;
-  logs[body.destination].destination = body.destination;
-  logs[body.destination].carrier = body.carrier;
-  logs[body.destination].currency = body.currency;
-  logs[body.destination].expenses = body.expenses;
-  logs[body.destination].sites = body.sites;
+  logs[body.logNum].logNum = body.logNum;
+  logs[body.logNum].startDate = body.startDate;
+  logs[body.logNum].endDate = body.endDate;
+  logs[body.logNum].destination = body.destination;
+  logs[body.logNum].carrier = body.carrier;
+  logs[body.logNum].currency = body.currency;
+  logs[body.logNum].expenses = body.expenses;
+  logs[body.logNum].sites = body.sites;
 
   //   console.dir(logs[body.startDate]);
 

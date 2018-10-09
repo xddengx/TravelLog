@@ -27,7 +27,7 @@ const urlStructHEAD = {
 // POST
 const handlePost = (request, response, parsedUrl) => {
   // if post is to /addLog (our only POST url)
-  if (parsedUrl.pathname === '/addLog') {
+  if (parsedUrl.pathname === '/addLog' || parsedUrl.pathname === '/updateLog') {
     const res = response;
 
     // uploads come in as a byte stream that we need

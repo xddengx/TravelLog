@@ -1,0 +1,104 @@
+/* #newSect{
+    float: left;
+    padding: 0px 100px;
+}
+
+#updateLogForm{
+    padding: 0px 100px;
+}
+
+#storedLogs{
+    text-align: center;
+} */
+
+body{
+    font-family: sans-serif;
+}
+#note{
+    display: inline;
+    font-size: 12px;
+}
+input{
+    width: 90%;
+}
+input[type=submit] {
+    background-color: #008CBA; 
+    border: none;
+    color: white;
+    padding: 10px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+}
+
+#logNumField{
+    font-size: 14px;
+}
+
+#totalLogs{
+    width: 50px;
+}
+
+select{
+    height: 30px;
+}
+
+#specificDestination{
+    width: 25%;
+    padding: 10px 4px;
+}
+#getLogInput{
+    width: 10%
+}
+
+/* stlying the input boxes */
+input[type=text] {
+    padding: 5px 4px;
+    margin: 2px 0px;
+    box-sizing: border-box;
+}
+
+/* remove border around log number field */
+#logNumField{
+    border: none;
+    width: 25%;
+}
+
+.gridCont{
+    width: auto;
+    display: grid;
+    grid-template-areas: 
+        "notification notification"
+        "newSect updateSect"
+        "storedLogs storedLogs"
+        "content content";
+    grid-template-rows:  auto;
+    /* column-gap: 40px; */
+    grid-template-columns: 0.5fr 0.5fr;
+}
+
+#notification{
+    grid-area: notification;
+    margin: 0px 60px;
+}
+#newSect{
+    grid-area: newSect;
+    margin: 0px 60px;
+}
+#updateSect{
+    grid-area: updateSect;
+    margin: 0px 60px;
+}
+#storedLogs{
+    grid-area: storedLogs;
+    /* text-align: center; */
+    margin: 0px 60px;
+}
+#content{
+    grid-area: content;
+    margin: 0px 15px;
+}
+
+
+
