@@ -1,7 +1,6 @@
 "use strict";
 
 const parseJSON = (xhr, notification) => {
-  console.log(notification);
     //parse response (obj will be empty in a 204 updated)
     const obj = JSON.parse(xhr.response);
     const destination = obj.logs;
@@ -12,30 +11,23 @@ const parseJSON = (xhr, notification) => {
       p.textContent = `Message: ${obj.message}`;
       notification.appendChild(p);
     }
+
     // if logs in response, add to screen
     let divCards = document.querySelectorAll("#content div");
     for(let p = 0; p < divCards.length; p++){
-      // console.log(divCards);
-      console.log(divCards.length);
-      // if(divCards.length == 0){
-      //   console.log("in if")
-      //   content.appendChild(card);
-      // }else{
-      //   console.log("in else")
-      //   divCards[p].parentNode.removeChild(divCards[p]);
-      //   content.appendChild(card);
-      // }
-        console.log("in remove")
       divCards[p].parentNode.removeChild(divCards[p]);
+    }
+
+    let logOptions = document.querySelectorAll('#totalLogs option')
+    for(let a = 0; a < logOptions.length; a++){
+      logOptions[a].parentNode.removeChild(logOptions[a]);
     }
 
   if(destination) {
     let keys = Object.keys(destination);
-    console.log("keys", keys.length); //
 
     for(let i = 0; i < keys.length;i++){
       let attributes = obj.logs[keys[i]]; // returns the structure
-      console.log("attributes", attributes);
 
       // create cards for log entries
       let card = document.createElement('div');
@@ -51,25 +43,32 @@ const parseJSON = (xhr, notification) => {
         // content.appendChild(card);
       }
       content.appendChild(card);   
+      
+      let loggedNum = obj.logs[keys[i]].logNum; // returns the logged numbers
+      let totalLogsEl = document.querySelector('#totalLogs');
+      let logOptions = document.createElement("option");
+      console.log("log options after", logOptions);
+      logOptions.text = loggedNum;
+      logOptions.value = loggedNum;
+      totalLogsEl.appendChild(logOptions);  
     }
 
     // get total number of saved logs
-    let totalLogs = keys.length;
-    let totalLogsEl = document.querySelector('#totalLogs');
-    for(let j = 0; j < totalLogs;j++){
-      // console.log("hello?");
-      let logOptions = document.createElement("option");
-      logOptions.text = j;
-      logOptions.value = j;
-      // console.log(logOptions);
-      totalLogsEl.appendChild(logOptions);  
-    }
+    // let totalLogs = keys.length;
+    // let totalLogsEl = document.querySelector('#totalLogs');
+    // for(let j = 0; j < totalLogs;j++){
+    //   // console.log("hello?");
+    //   let logOptions = document.createElement("option");
+    //   logOptions.text = j;
+    //   logOptions.value = j;
+    //   // console.log(logOptions);
+    //   totalLogsEl.appendChild(logOptions);  
+    // }
   }
 };
 
 const handleResponse = (xhr, parseResponse) =>{
   const notification = document.querySelector('#notification');
-  console.log(xhr.status);
 
   switch(xhr.status){
     case 200:

@@ -1,7 +1,6 @@
 "use strict";
 
 var parseJSON = function parseJSON(xhr, notification) {
-  console.log(notification);
   //parse response (obj will be empty in a 204 updated)
   var obj = JSON.parse(xhr.response);
   var destination = obj.logs;
@@ -12,30 +11,23 @@ var parseJSON = function parseJSON(xhr, notification) {
     p.textContent = "Message: " + obj.message;
     notification.appendChild(p);
   }
+
   // if logs in response, add to screen
   var divCards = document.querySelectorAll("#content div");
   for (var _p = 0; _p < divCards.length; _p++) {
-    // console.log(divCards);
-    console.log(divCards.length);
-    // if(divCards.length == 0){
-    //   console.log("in if")
-    //   content.appendChild(card);
-    // }else{
-    //   console.log("in else")
-    //   divCards[p].parentNode.removeChild(divCards[p]);
-    //   content.appendChild(card);
-    // }
-    console.log("in remove");
     divCards[_p].parentNode.removeChild(divCards[_p]);
+  }
+
+  var logOptions = document.querySelectorAll('#totalLogs option');
+  for (var a = 0; a < logOptions.length; a++) {
+    logOptions[a].parentNode.removeChild(logOptions[a]);
   }
 
   if (destination) {
     var keys = Object.keys(destination);
-    console.log("keys", keys.length); //
 
     for (var i = 0; i < keys.length; i++) {
       var attributes = obj.logs[keys[i]]; // returns the structure
-      console.log("attributes", attributes);
 
       // create cards for log entries
       var card = document.createElement('div');
@@ -51,25 +43,32 @@ var parseJSON = function parseJSON(xhr, notification) {
         // content.appendChild(card);
       }
       content.appendChild(card);
+
+      var loggedNum = obj.logs[keys[i]].logNum; // returns the logged numbers
+      var totalLogsEl = document.querySelector('#totalLogs');
+      var _logOptions = document.createElement("option");
+      console.log("log options after", _logOptions);
+      _logOptions.text = loggedNum;
+      _logOptions.value = loggedNum;
+      totalLogsEl.appendChild(_logOptions);
     }
 
     // get total number of saved logs
-    var totalLogs = keys.length;
-    var totalLogsEl = document.querySelector('#totalLogs');
-    for (var j = 0; j < totalLogs; j++) {
-      // console.log("hello?");
-      var logOptions = document.createElement("option");
-      logOptions.text = j;
-      logOptions.value = j;
-      // console.log(logOptions);
-      totalLogsEl.appendChild(logOptions);
-    }
+    // let totalLogs = keys.length;
+    // let totalLogsEl = document.querySelector('#totalLogs');
+    // for(let j = 0; j < totalLogs;j++){
+    //   // console.log("hello?");
+    //   let logOptions = document.createElement("option");
+    //   logOptions.text = j;
+    //   logOptions.value = j;
+    //   // console.log(logOptions);
+    //   totalLogsEl.appendChild(logOptions);  
+    // }
   }
 };
 
 var handleResponse = function handleResponse(xhr, parseResponse) {
   var notification = document.querySelector('#notification');
-  console.log(xhr.status);
 
   switch (xhr.status) {
     case 200:
