@@ -18,7 +18,7 @@ const respondJSONMeta = (request, response, status) => {
 };
 
 // 200 - successful
-const getLog = (request, response) => {
+const getLog = (request, response, params) => {
   const jsonResponse = {
     logs,
   };
@@ -73,8 +73,82 @@ const addLog = (request, response, body) => {
   return respondJSONMeta(request, response, responseCode);
 };
 
+const searchQuery = (request, response, params) =>{
+  let keys = Object.keys(logs);
+
+    for(let a = 0; a < keys.length; a++){
+      // console.dir(logs[keys[a]]);
+      if(!params.destination || params.destination !== logs[keys[a]].logNum){
+        let jsonResponse = {
+          id: "Failed to find log destination",
+          message: "This destination was not found in the logs.",
+        }
+          return respondJSON(request, response, 400, jsonResponse);
+      }
+      else{
+        let jsonResponse = {
+          message: logs[keys[a]],
+        }
+
+        return respondJSON(request, response, 200, jsonResponse);
+      }
+    }
+    
+  // for(let a = 0; a < keys.length; a++){
+  //   // console.dir(logs[keys[a]].destination);
+
+  //   // if parameter is not destination and destination is not found in the log
+  //   if(!params.destination || params.destination !== logs[keys[a]].destination){
+  //     let jsonResponse = {
+  //       id: "Failed to find log destination",
+  //       message: "This destination was not found in the logs.",
+  //     }
+
+  //     return respondJSON(request, response, 400, jsonResponse)
+  //   }
+
+  //   // if destination is found in the log. return the rest of the information
+  //   if(logs[keys[a]].destination){
+  //     let jsonResponse = {
+  //       message: logs[keys[a]],
+  //     }
+
+  //     return respondJSON(request, response, 200, jsonResponse);
+  //   }
+  // }
+
+  // for(let b = 0; b < keys.length; b++){
+  //   // console.dir(logs[keys[b]].destination); // returns list of destinations
+  //   console.dir(logs[keys[b]].destination);
+  // }
+
+  // for(let a = 0; a < keys.length; a++){
+  //   // console.dir(logs[keys[a]].destination);
+
+  //   // if parameter is not destination and destination is not found in the log
+  //   if(!params.destination || params.destination !== logs[keys[a]].destination){
+  //     let jsonResponse = {
+  //       id: "Failed to find log destination",
+  //       message: "This destination was not found in the logs.",
+  //     }
+
+  //     return respondJSON(request, response, 400, jsonResponse)
+  //   }
+
+  //   // if destination is found in the log. return the rest of the information
+  //   if(logs[keys[a]].destination){
+  //     let jsonResponse = {
+  //       message: logs[keys[a]],
+  //     }
+
+  //     return respondJSON(request, response, 200, jsonResponse);
+  //   }
+  // }
+};
+
+
 // 404 error message
-const notFound = (request, response) => {
+const notFound = (request, response, params) => {
   const jsonResponse = {
     id: 'notFound',
     message: 'The page you are looking for is not found',
@@ -92,6 +166,7 @@ module.exports = {
   getLog,
   getLogMeta,
   addLog,
+  searchQuery,
   notFound,
   notFoundMeta,
 };

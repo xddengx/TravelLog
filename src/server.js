@@ -12,6 +12,7 @@ const urlStructGET = {
   '/style.css': htmlHandler.getCSS,
   '/allLogs': jsonHandler.getLog,
   '/getLog': jsonHandler.getLog,
+  '/search': jsonHandler.searchQuery,
   '/notReal': jsonHandler.notFound,
   '/bundle.js': htmlHandler.getBundle,
   notFound: jsonHandler.notFound,
@@ -69,22 +70,25 @@ const onRequest = (request, response) => {
   // parse the url using the url module
   const parsedUrl = url.parse(request.url);
 
+  // grab the query parameters
+  const params = query.parse(parsedUrl.query);
+
   // check if the path name (the /name part of the url) matches
   // any in our url object. If so call that function. If not, default to index.
   switch (request.method) {
     case 'GET':
       if (urlStructGET[parsedUrl.pathname]) {
-        urlStructGET[parsedUrl.pathname](request, response);
+        urlStructGET[parsedUrl.pathname](request, response, params);
       } else {
-        urlStructGET.notFound(request, response);
+        urlStructGET.notFound(request, response, params);
       }
       break;
 
     case 'HEAD':
       if (urlStructHEAD[parsedUrl.pathname]) {
-        urlStructHEAD[parsedUrl.pathname](request, response);
+        urlStructHEAD[parsedUrl.pathname](request, response, params);
       } else {
-        urlStructHEAD.notFoundMeta(request, response);
+        urlStructHEAD.notFoundMeta(request, response, params);
       }
       break;
 

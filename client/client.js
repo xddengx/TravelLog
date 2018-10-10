@@ -4,6 +4,8 @@ const parseJSON = (xhr, notification) => {
     //parse response (obj will be empty in a 204 updated)
     const obj = JSON.parse(xhr.response);
     const destination = obj.logs;
+    // console.dir(obj);
+    console.dir(destination);
 
     //if message in response, add to screen
     if(obj.message) {
@@ -35,10 +37,14 @@ const parseJSON = (xhr, notification) => {
       card.style.cssText = cssString;
 
       for(let key in attributes){
-        // console.log(key, attributes[key]);
+        console.log(key, attributes[key]);
         let cardInfo = document.createElement('p');
         cardInfo.style.fontSize = "19px";
         cardInfo.textContent = key.charAt(0).toUpperCase() + key.slice(1) + ": " + attributes[key];
+        if(key == 'carrier'){
+          console.log("working");
+        }
+
         card.appendChild(cardInfo);
         // content.appendChild(card);
       }
@@ -154,6 +160,9 @@ const sendPost = (e,logForm) =>{
     let logOption = updateLogForm.querySelector('#totalLogs');
     let selectedLog = logOption.options[logOption.selectedIndex].value;
   
+    if(!selectedLog){
+      alert("no");
+    }else{
     // create a new AJAX request 
     const xhr = new XMLHttpRequest();
     // set the method (POST) and url (action attribute from log form)
@@ -178,6 +187,7 @@ const sendPost = (e,logForm) =>{
     e.preventDefault();
     //return false to prevent the browser from trying to change page
     return false;
+  }
   };
 
 const requestLog = (e, storedForm) =>{

@@ -4,6 +4,8 @@ var parseJSON = function parseJSON(xhr, notification) {
   //parse response (obj will be empty in a 204 updated)
   var obj = JSON.parse(xhr.response);
   var destination = obj.logs;
+  // console.dir(obj);
+  console.dir(destination);
 
   //if message in response, add to screen
   if (obj.message) {
@@ -35,10 +37,14 @@ var parseJSON = function parseJSON(xhr, notification) {
       card.style.cssText = cssString;
 
       for (var key in attributes) {
-        // console.log(key, attributes[key]);
+        console.log(key, attributes[key]);
         var cardInfo = document.createElement('p');
         cardInfo.style.fontSize = "19px";
         cardInfo.textContent = key.charAt(0).toUpperCase() + key.slice(1) + ": " + attributes[key];
+        if (key == 'carrier') {
+          console.log("working");
+        }
+
         card.appendChild(cardInfo);
         // content.appendChild(card);
       }
@@ -158,32 +164,36 @@ var updatePost = function updatePost(e, updateLogForm) {
   var logOption = updateLogForm.querySelector('#totalLogs');
   var selectedLog = logOption.options[logOption.selectedIndex].value;
 
-  // create a new AJAX request 
-  var xhr = new XMLHttpRequest();
-  // set the method (POST) and url (action attribute from log form)
-  xhr.open(nameMethod, nameAction);
-  // set request to x-www-form-urlencoded
-  // same format as query string key=value&key2=value2
-  xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-  //set our requested response type as JSON response
-  xhr.setRequestHeader('Accept', 'application/json');
-  // set function to handle the response
-  xhr.onload = function () {
-    return handleResponse(xhr, true);
-  };
-  // increment log number everytime addLog is clicked. Does not increment if log # already exists
+  if (!selectedLog) {
+    alert("no");
+  } else {
+    // create a new AJAX request 
+    var xhr = new XMLHttpRequest();
+    // set the method (POST) and url (action attribute from log form)
+    xhr.open(nameMethod, nameAction);
+    // set request to x-www-form-urlencoded
+    // same format as query string key=value&key2=value2
+    xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+    //set our requested response type as JSON response
+    xhr.setRequestHeader('Accept', 'application/json');
+    // set function to handle the response
+    xhr.onload = function () {
+      return handleResponse(xhr, true);
+    };
+    // increment log number everytime addLog is clicked. Does not increment if log # already exists
 
-  var formData = void 0;
-  for (var i = 0; i < logInputs.length - 1; i++) {
-    formData = "logNum=" + selectedLog + "&startDate=" + logInputs[0].value + "&endDate=" + logInputs[1].value + "&destination=" + logInputs[2].value + "&carrier=" + logInputs[3].value + "&currency=" + logInputs[4].value + "&expenses=" + logInputs[5].value + "&sites=" + logInputs[6].value;
+    var formData = void 0;
+    for (var i = 0; i < logInputs.length - 1; i++) {
+      formData = "logNum=" + selectedLog + "&startDate=" + logInputs[0].value + "&endDate=" + logInputs[1].value + "&destination=" + logInputs[2].value + "&carrier=" + logInputs[3].value + "&currency=" + logInputs[4].value + "&expenses=" + logInputs[5].value + "&sites=" + logInputs[6].value;
+    }
+
+    // send our request with the data
+    xhr.send(formData);
+    //prevent the browser's default action (to send the form on its own)
+    e.preventDefault();
+    //return false to prevent the browser from trying to change page
+    return false;
   }
-
-  // send our request with the data
-  xhr.send(formData);
-  //prevent the browser's default action (to send the form on its own)
-  e.preventDefault();
-  //return false to prevent the browser from trying to change page
-  return false;
 };
 
 var requestLog = function requestLog(e, storedForm) {
