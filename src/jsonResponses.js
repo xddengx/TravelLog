@@ -61,6 +61,7 @@ const addLog = (request, response, body) => {
   logs[body.logNum].currency = body.currency;
   logs[body.logNum].expenses = body.expenses;
   logs[body.logNum].sites = body.sites;
+  logs[body.logNum].image = body.image;
 
   //   console.dir(logs[body.startDate]);
 
@@ -93,7 +94,7 @@ const searchQuery = (request, response, params) =>{
         return respondJSON(request, response, 200, jsonResponse);
       }
     }
-    
+
   // for(let a = 0; a < keys.length; a++){
   //   // console.dir(logs[keys[a]].destination);
 

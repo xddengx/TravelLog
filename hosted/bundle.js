@@ -27,9 +27,11 @@ var parseJSON = function parseJSON(xhr, notification) {
 
   if (destination) {
     var keys = Object.keys(destination);
+    // console.log("keys", keys)
 
     for (var i = 0; i < keys.length; i++) {
       var attributes = obj.logs[keys[i]]; // returns the structure
+      // console.log(attributes.image);
 
       // create cards for log entries
       var card = document.createElement('div');
@@ -37,15 +39,20 @@ var parseJSON = function parseJSON(xhr, notification) {
       card.style.cssText = cssString;
 
       for (var key in attributes) {
-        console.log(key, attributes[key]);
-        var cardInfo = document.createElement('p');
-        cardInfo.style.fontSize = "19px";
-        cardInfo.textContent = key.charAt(0).toUpperCase() + key.slice(1) + ": " + attributes[key];
-        if (key == 'carrier') {
-          console.log("working");
-        }
+        // console.log(key, attributes[key]);
 
-        card.appendChild(cardInfo);
+        if (key == 'image') {
+          var img = document.createElement('img');
+          img.style = "width: 250px; height:200px";
+          if (img.src = attributes.image) {
+            card.appendChild(img);
+          }
+        } else {
+          var cardInfo = document.createElement('p');
+          cardInfo.style.fontSize = "19px";
+          cardInfo.textContent = key.charAt(0).toUpperCase() + key.slice(1) + ": " + attributes[key];
+          card.appendChild(cardInfo);
+        }
         // content.appendChild(card);
       }
       content.appendChild(card);
@@ -143,9 +150,10 @@ var sendPost = function sendPost(e, logForm) {
 
   var formData = void 0;
   for (var i = 0; i < logInputs.length - 1; i++) {
-    formData = "logNum=" + logInputs[0].value + "&startDate=" + logInputs[1].value + "&endDate=" + logInputs[2].value + "&destination=" + logInputs[3].value + "&carrier=" + logInputs[4].value + "&currency=" + logInputs[5].value + "&expenses=" + logInputs[6].value + "&sites=" + logInputs[7].value;
+    formData = "logNum=" + logInputs[0].value + "&startDate=" + logInputs[1].value + "&endDate=" + logInputs[2].value + "&destination=" + logInputs[3].value + "&carrier=" + logInputs[4].value + "&currency=" + logInputs[5].value + "&expenses=" + logInputs[6].value + "&sites=" + logInputs[7].value + "&image=" + logInputs[8].value;
   }
 
+  console.log("formdata", formData);
   // send our request with the data
   xhr.send(formData);
   //prevent the browser's default action (to send the form on its own)
@@ -162,7 +170,10 @@ var updatePost = function updatePost(e, updateLogForm) {
   // grab the fields 
   var logInputs = document.forms['updateLogForm'].getElementsByTagName('input');
   var logOption = updateLogForm.querySelector('#totalLogs');
-  var selectedLog = logOption.options[logOption.selectedIndex].value;
+  var selectedLog = void 0;
+  if (logOption.options[logOption.selectedIndex].value !== 'undefined') {
+    selectedLog = logOption.options[logOption.selectedIndex].value;
+  }
 
   if (!selectedLog) {
     alert("no");
@@ -184,7 +195,7 @@ var updatePost = function updatePost(e, updateLogForm) {
 
     var formData = void 0;
     for (var i = 0; i < logInputs.length - 1; i++) {
-      formData = "logNum=" + selectedLog + "&startDate=" + logInputs[0].value + "&endDate=" + logInputs[1].value + "&destination=" + logInputs[2].value + "&carrier=" + logInputs[3].value + "&currency=" + logInputs[4].value + "&expenses=" + logInputs[5].value + "&sites=" + logInputs[6].value;
+      formData = "logNum=" + selectedLog + "&startDate=" + logInputs[0].value + "&endDate=" + logInputs[1].value + "&destination=" + logInputs[2].value + "&carrier=" + logInputs[3].value + "&currency=" + logInputs[4].value + "&expenses=" + logInputs[5].value + "&sites=" + logInputs[6].value + "&image=" + logInputs[7].value;
     }
 
     // send our request with the data
