@@ -5,9 +5,9 @@ const parseJSON = (xhr, notification) => {
   //parse response (obj will be empty in a 204 updated)
   const obj = JSON.parse(xhr.response);
   const destination = obj.logs;
-  // console.dir(obj);
+  console.dir(obj);
 
-  //if message in response, add to screen
+  // if message in response, add to screen
   if(obj.message) {
     const p = document.createElement('p');
     p.textContent = `Message: ${obj.message}`;
@@ -67,12 +67,18 @@ const parseJSON = (xhr, notification) => {
       let loggedNum = obj.logs[keys[i]].logNum; // returns the logged numbers
       let totalLogsEl = document.querySelector('#totalLogs');
       let logOptions = document.createElement("option");
-      console.log("log options after", logOptions);
+      
       logOptions.text = loggedNum;
       logOptions.value = loggedNum;
       totalLogsEl.appendChild(logOptions);  
     }
   }
+  
+  // if a specific destination was searched. it returns that specific object
+// if(obj.message){
+//   console.log("hello");
+
+// }
 };
 
 // handle response requests
@@ -127,20 +133,6 @@ const sendPost = (e,logForm) =>{
   // set function to handle the response
   xhr.onload = () => handleResponse(xhr, true); 
 
-  // increment log number everytime addLog is clicked. Does not increment if log # already exists
-  logNumValue++;
-  logNumField.value = logNumValue;  
-
-  // if(logNumField.value == 0){
-  //   logNumField.value = 0; 
-  //   console.log("log num value",logNumValue);
-  // }
-  // logNumValue++;
-  // if(logNumField.value > 1){
-  //   logNumValue++;
-  //   logNumField.value = logNumValue;  
-  // }
-
   let formData; 
   for(let i = 0; i < logInputs.length-1; i++){
     formData = `logNum=${logInputs[0].value}&startDate=${logInputs[1].value}&endDate=${logInputs[2].value}&destination=${logInputs[3].value}&carrier=${logInputs[4].value}&currency=${logInputs[5].value}&expenses=${logInputs[6].value}&sites=${logInputs[7].value}&image=${logInputs[8].value}`;
@@ -149,6 +141,15 @@ const sendPost = (e,logForm) =>{
   console.log("formdata", formData);
   // send our request with the data
   xhr.send(formData);
+
+  // clear form after data is sent
+  document.querySelector("#logForm").reset();
+
+  // place increment after form clearing to prevent log number from going back to 0
+  // increment log number everytime addLog is clicked. Does not increment if log # already exists
+  logNumValue++;
+  logNumField.value = logNumValue;  
+
   //prevent the browser's default action (to send the form on its own)
   e.preventDefault();
   //return false to prevent the browser from trying to change page
@@ -166,37 +167,46 @@ const updatePost = (e,updateLogForm) =>{
   let logOption = updateLogForm.querySelector('#totalLogs');    // html select element
 //   let selectedLog;
 
-// console.log(logOption.options[logOption.selectedIndex].value);
+// if logOption does not contain any option elements and the selected index is null
+  // alert user to Get Logs and pick a log #
+  if(!logOption.options[logOption.selectedIndex]){
+    console.log("here ekf");
 
-// logOption.options returning error. select dropdown is not populated until user clicks 'Get Logs'
-  if(!logOption.options[logOption.selectedIndex].value){
-    console.log("not");
-  }else{
-    let selectedLog = logOption.options[logOption.selectedIndex].value;
-    // create a new AJAX request 
-    const xhr = new XMLHttpRequest();
-    // set the method (POST) and url (action attribute from log form)
-    xhr.open(nameMethod, nameAction); 
-    // set request to x-www-form-urlencoded
-    // same format as query string key=value&key2=value2
-    xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-    //set our requested response type as JSON response
-    xhr.setRequestHeader ('Accept', 'application/json');  
-    // set function to handle the response
-    xhr.onload = () => handleResponse(xhr, true); 
-
-    let formData; 
-    for(let i = 0; i < logInputs.length-1; i++){
-      formData = `logNum=${selectedLog}&startDate=${logInputs[0].value}&endDate=${logInputs[1].value}&destination=${logInputs[2].value}&carrier=${logInputs[3].value}&currency=${logInputs[4].value}&expenses=${logInputs[5].value}&sites=${logInputs[6].value}&image=${logInputs[7].value}`;
+    // if selected log num is undefined
+    if(!logOption.options[logOption.selectedIndex].value){
+      console.log("false");
     }
-
-    // send our request with the data
-    xhr.send(formData);
-    //prevent the browser's default action (to send the form on its own)
-    e.preventDefault();
-    //return false to prevent the browser from trying to change page
-    return false;
   }
+  if(logOption.options[logOption.selectedIndex] && logOption.options[logOption.selectedIndex].value){
+      let selectedLog = logOption.options[logOption.selectedIndex].value;
+      // create a new AJAX request 
+      const xhr = new XMLHttpRequest();
+      // set the method (POST) and url (action attribute from log form)
+      xhr.open(nameMethod, nameAction); 
+      // set request to x-www-form-urlencoded
+      // same format as query string key=value&key2=value2
+      xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+      //set our requested response type as JSON response
+      xhr.setRequestHeader ('Accept', 'application/json');  
+      // set function to handle the response
+      xhr.onload = () => handleResponse(xhr, true); 
+
+      let formData; 
+      for(let i = 0; i < logInputs.length-1; i++){
+        formData = `logNum=${selectedLog}&startDate=${logInputs[0].value}&endDate=${logInputs[1].value}&destination=${logInputs[2].value}&carrier=${logInputs[3].value}&currency=${logInputs[4].value}&expenses=${logInputs[5].value}&sites=${logInputs[6].value}&image=${logInputs[7].value}`;
+      }
+
+      // send our request with the data
+      xhr.send(formData);
+
+      // clear form after data is sent
+      document.querySelector("#updateLogForm").reset();
+
+      //prevent the browser's default action (to send the form on its own)
+      e.preventDefault();
+      //return false to prevent the browser from trying to change page
+      return false;
+    }
 };
 
 const requestLog = (e, storedForm) =>{
@@ -212,6 +222,9 @@ const requestLog = (e, storedForm) =>{
     xhr.onload = () => handleResponse(xhr,true);
     //send ajax request
     xhr.send();
+
+    document.querySelector("#storedForm").reset();
+
     //cancel browser's default action
     e.preventDefault();
     //return false to prevent page redirection from a form
@@ -219,13 +232,18 @@ const requestLog = (e, storedForm) =>{
   }
 
   // create a query string send to ajax and good to go 
-  if(searchSelect == '/destination'){
-    xhr.open('GET', searchSelect);
+  if(searchSelect == '/search'){
+    let queryString = searchSelect + '?' + 'destination=' + specificDestination;
+    
+    xhr.open('GET', queryString);
     xhr.setRequestHeader('Accept', 'application/json');
     //set onload to parse request and get json message
     xhr.onload = () => handleResponse(xhr,true);
     //send ajax request
     xhr.send();
+
+    document.querySelector("#storedForm").reset();
+
     //cancel browser's default action
     e.preventDefault();
     //return false to prevent page redirection from a form

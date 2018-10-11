@@ -18,7 +18,7 @@ const respondJSONMeta = (request, response, status) => {
 };
 
 // 200 - successful
-const getLog = (request, response, params) => {
+const getLog = (request, response) => {
     
   const jsonResponse = {
     logs,
@@ -28,7 +28,11 @@ const getLog = (request, response, params) => {
 };
 
 const searchQuery = (request, response, params) =>{
+  // 
   let keys = Object.keys(logs);
+  // destination through ajax. Get the value of key. parmas returns { destination: 'Maine' }
+  let destination = Object.values(params); // destination = ['Maine'];
+  let parseDestination = destination[0];
 
   if(!params.destination){
     let jsonResponse = {
@@ -38,74 +42,61 @@ const searchQuery = (request, response, params) =>{
     return respondJSON(request, response, 400, jsonResponse);
   }
 
-  for(let a = 0; a < keys.length; a++){
-    // console.dir(logs[keys[a]]);
-    if(params.destination == logs[keys[a]].destination){
-      let jsonResponse = {
-        message: logs[keys[a]],
+  // direct query search
+  // for(let a = 0; a < keys.length; a++){
+  //   // console.dir(logs[keys[a]]);
+  //   // console.dir(keys[a]);
+  //   // console.dir(logs[keys[a]].destination);
+  //   // if the destination search is found within the logs return the destination's object
+  //   if(params.destination === logs[keys[a]].destination){
+  //     let jsonResponse = {
+  //       message: logs[keys[a]],
+  //     }
+
+  //     return respondJSON(request, response, 200, jsonResponse);
+  //   }
+  // }
+
+      
+  for(let b = 0; b < keys.length; b++){
+    let destNum = Object.values(logs[keys[b]])[b]; //return 1 or the found destNum
+  
+    // store logs[keys[a]] in a new object
+    if(parseDestination === logs[keys[b]].destination){
+      const destinations = {};
+      destinations[destNum] = {};
+
+      let destKeys = Object.keys(logs[keys[b]]);  // returns the object of all keys
+      let destValues = Object.values(logs[keys[b]]); // returns the object of all values
+      
+      // KEEP THIS 
+      for(let c = 0; c < destKeys.length; c++){
+        // parsedDestKeys = destKeys[c];
+        // parsedDestValues = destValues[c];
+        // console.dir(parsedDestKeys); // length, logNum, etc.
+        // console.dir(parsedDestValues);
+
+        console.dir(destKeys[c]);
+        console.dir(destValues[c]);
+
+        
+        destinations[destNum].destKeys[c] = destValues[c];  //Cannot set property '0' of undefined
+
       }
 
+      let jsonResponse = {
+        destinations,
+      }
       return respondJSON(request, response, 200, jsonResponse);
     }
   }
 
+  // if the destination wasnt found, 400 error
   let jsonResponse = {
     id: "Failed to find log destination",
     message: "This destination was not found in the logs.",
   }
   return respondJSON(request, response, 400, jsonResponse);
-
-
-  // for(let a = 0; a < keys.length; a++){
-  //   // console.dir(logs[keys[a]].destination);
-
-  //   // if parameter is not destination and destination is not found in the log
-  //   if(!params.destination || params.destination !== logs[keys[a]].destination){
-  //     let jsonResponse = {
-  //       id: "Failed to find log destination",
-  //       message: "This destination was not found in the logs.",
-  //     }
-
-  //     return respondJSON(request, response, 400, jsonResponse)
-  //   }
-
-  //   // if destination is found in the log. return the rest of the information
-  //   if(logs[keys[a]].destination){
-  //     let jsonResponse = {
-  //       message: logs[keys[a]],
-  //     }
-
-  //     return respondJSON(request, response, 200, jsonResponse);
-  //   }
-  // }
-
-  // for(let b = 0; b < keys.length; b++){
-  //   // console.dir(logs[keys[b]].destination); // returns list of destinations
-  //   console.dir(logs[keys[b]].destination);
-  // }
-
-  // for(let a = 0; a < keys.length; a++){
-  //   // console.dir(logs[keys[a]].destination);
-
-  //   // if parameter is not destination and destination is not found in the log
-  //   if(!params.destination || params.destination !== logs[keys[a]].destination){
-  //     let jsonResponse = {
-  //       id: "Failed to find log destination",
-  //       message: "This destination was not found in the logs.",
-  //     }
-
-  //     return respondJSON(request, response, 400, jsonResponse)
-  //   }
-
-  //   // if destination is found in the log. return the rest of the information
-  //   if(logs[keys[a]].destination){
-  //     let jsonResponse = {
-  //       message: logs[keys[a]],
-  //     }
-
-  //     return respondJSON(request, response, 200, jsonResponse);
-  //   }
-  // }
 };
 
 const getLogMeta = (request, response) => {
@@ -157,7 +148,7 @@ const addLog = (request, response, body) => {
 };
 
 // 404 error message
-const notFound = (request, response, params) => {
+const notFound = (request, response) => {
   const jsonResponse = {
     id: 'notFound',
     message: 'The page you are looking for is not found',

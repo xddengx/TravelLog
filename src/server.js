@@ -11,7 +11,7 @@ const urlStructGET = {
   '/': htmlHandler.getIndex,
   '/style.css': htmlHandler.getCSS,
   '/allLogs': jsonHandler.getLog,
-  '/destination': jsonHandler.searchQuery,
+  '/search': jsonHandler.searchQuery,
   '/notReal': jsonHandler.notFound,
   '/bundle.js': htmlHandler.getBundle,
   notFound: jsonHandler.notFound,
