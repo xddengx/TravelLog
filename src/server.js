@@ -11,8 +11,7 @@ const urlStructGET = {
   '/': htmlHandler.getIndex,
   '/style.css': htmlHandler.getCSS,
   '/allLogs': jsonHandler.getLog,
-  '/getLog': jsonHandler.getLog,
-  '/search': jsonHandler.searchQuery,
+  '/destination': jsonHandler.searchQuery,
   '/notReal': jsonHandler.notFound,
   '/bundle.js': htmlHandler.getBundle,
   notFound: jsonHandler.notFound,
@@ -20,7 +19,7 @@ const urlStructGET = {
 
 // HEAD
 const urlStructHEAD = {
-  '/getLogs': jsonHandler.getLogMeta,
+  '/allLogs': jsonHandler.getLogMeta,
   '/notReal': jsonHandler.notFoundMeta,
   notFound: jsonHandler.notFoundMeta,
 };

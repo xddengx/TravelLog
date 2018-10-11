@@ -1,11 +1,12 @@
 "use strict";
 
+// parse json returned
+
 var parseJSON = function parseJSON(xhr, notification) {
   //parse response (obj will be empty in a 204 updated)
   var obj = JSON.parse(xhr.response);
   var destination = obj.logs;
   // console.dir(obj);
-  console.dir(destination);
 
   //if message in response, add to screen
   if (obj.message) {
@@ -14,20 +15,21 @@ var parseJSON = function parseJSON(xhr, notification) {
     notification.appendChild(p);
   }
 
-  // if logs in response, add to screen
+  // clear created cards (prevents duplicates from being created)
   var divCards = document.querySelectorAll("#content div");
   for (var _p = 0; _p < divCards.length; _p++) {
     divCards[_p].parentNode.removeChild(divCards[_p]);
   }
 
+  // clear options before append new options to dropdown select for updating logs
   var logOptions = document.querySelectorAll('#totalLogs option');
   for (var a = 0; a < logOptions.length; a++) {
     logOptions[a].parentNode.removeChild(logOptions[a]);
   }
 
+  // if log exists
   if (destination) {
-    var keys = Object.keys(destination);
-    // console.log("keys", keys)
+    var keys = Object.keys(destination); // return object keys
 
     for (var i = 0; i < keys.length; i++) {
       var attributes = obj.logs[keys[i]]; // returns the structure
@@ -38,25 +40,31 @@ var parseJSON = function parseJSON(xhr, notification) {
       var cssString = "background: aliceblue; padding: 30px; width: 25%; float: left; margin: 10px;";
       card.style.cssText = cssString;
 
+      // print the attributes for every key
       for (var key in attributes) {
         // console.log(key, attributes[key]);
 
+        // if the key is an image, instead of printing the url text string, show the image
         if (key == 'image') {
           var img = document.createElement('img');
           img.style = "width: 250px; height:200px";
           if (img.src = attributes.image) {
             card.appendChild(img);
           }
-        } else {
-          var cardInfo = document.createElement('p');
-          cardInfo.style.fontSize = "19px";
-          cardInfo.textContent = key.charAt(0).toUpperCase() + key.slice(1) + ": " + attributes[key];
-          card.appendChild(cardInfo);
         }
-        // content.appendChild(card);
+        // show the text strings for everything else
+        else {
+            var cardInfo = document.createElement('p');
+            cardInfo.style.fontSize = "19px";
+            cardInfo.textContent = key.charAt(0).toUpperCase() + key.slice(1) + ": " + attributes[key];
+            card.appendChild(cardInfo);
+          }
       }
       content.appendChild(card);
 
+      // get the total number of logs added. 
+      // create an option for each log number
+      // append the option to the select element
       var loggedNum = obj.logs[keys[i]].logNum; // returns the logged numbers
       var totalLogsEl = document.querySelector('#totalLogs');
       var _logOptions = document.createElement("option");
@@ -65,21 +73,10 @@ var parseJSON = function parseJSON(xhr, notification) {
       _logOptions.value = loggedNum;
       totalLogsEl.appendChild(_logOptions);
     }
-
-    // get total number of saved logs
-    // let totalLogs = keys.length;
-    // let totalLogsEl = document.querySelector('#totalLogs');
-    // for(let j = 0; j < totalLogs;j++){
-    //   // console.log("hello?");
-    //   let logOptions = document.createElement("option");
-    //   logOptions.text = j;
-    //   logOptions.value = j;
-    //   // console.log(logOptions);
-    //   totalLogsEl.appendChild(logOptions);  
-    // }
   }
 };
 
+// handle response requests
 var handleResponse = function handleResponse(xhr, parseResponse) {
   var notification = document.querySelector('#notification');
 
@@ -106,6 +103,7 @@ var handleResponse = function handleResponse(xhr, parseResponse) {
       break;
   }
 
+  // if true, call parsJSON function 
   if (parseResponse) {
     parseJSON(xhr, notification);
   }
@@ -167,17 +165,19 @@ var updatePost = function updatePost(e, updateLogForm) {
   // get logForm action 
   var nameAction = updateLogForm.getAttribute('action');
   var nameMethod = updateLogForm.getAttribute('method');
+
   // grab the fields 
   var logInputs = document.forms['updateLogForm'].getElementsByTagName('input');
-  var logOption = updateLogForm.querySelector('#totalLogs');
-  var selectedLog = void 0;
-  if (logOption.options[logOption.selectedIndex].value !== 'undefined') {
-    selectedLog = logOption.options[logOption.selectedIndex].value;
-  }
+  var logOption = updateLogForm.querySelector('#totalLogs'); // html select element
+  //   let selectedLog;
 
-  if (!selectedLog) {
-    alert("no");
+  // console.log(logOption.options[logOption.selectedIndex].value);
+
+  // logOption.options returning error. select dropdown is not populated until user clicks 'Get Logs'
+  if (!logOption.options[logOption.selectedIndex].value) {
+    console.log("not");
   } else {
+    var selectedLog = logOption.options[logOption.selectedIndex].value;
     // create a new AJAX request 
     var xhr = new XMLHttpRequest();
     // set the method (POST) and url (action attribute from log form)
@@ -191,7 +191,6 @@ var updatePost = function updatePost(e, updateLogForm) {
     xhr.onload = function () {
       return handleResponse(xhr, true);
     };
-    // increment log number everytime addLog is clicked. Does not increment if log # already exists
 
     var formData = void 0;
     for (var i = 0; i < logInputs.length - 1; i++) {
@@ -209,9 +208,27 @@ var updatePost = function updatePost(e, updateLogForm) {
 
 var requestLog = function requestLog(e, storedForm) {
   var searchSelect = storedForm.querySelector('#searchSelect').value;
+  var specificDestination = storedForm.querySelector('#specificDestination').value;
+
   // crate a new AJAX request
   var xhr = new XMLHttpRequest();
   if (searchSelect == '/allLogs') {
+    xhr.open('GET', searchSelect);
+    xhr.setRequestHeader('Accept', 'application/json');
+    //set onload to parse request and get json message
+    xhr.onload = function () {
+      return handleResponse(xhr, true);
+    };
+    //send ajax request
+    xhr.send();
+    //cancel browser's default action
+    e.preventDefault();
+    //return false to prevent page redirection from a form
+    return false;
+  }
+
+  // create a query string send to ajax and good to go 
+  if (searchSelect == '/destination') {
     xhr.open('GET', searchSelect);
     xhr.setRequestHeader('Accept', 'application/json');
     //set onload to parse request and get json message

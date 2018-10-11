@@ -1,62 +1,69 @@
 "use strict";
 
+// parse json returned
 const parseJSON = (xhr, notification) => {
-    //parse response (obj will be empty in a 204 updated)
-    const obj = JSON.parse(xhr.response);
-    const destination = obj.logs;
-    // console.dir(obj);
-    console.dir(destination);
+  //parse response (obj will be empty in a 204 updated)
+  const obj = JSON.parse(xhr.response);
+  const destination = obj.logs;
+  // console.dir(obj);
 
-    //if message in response, add to screen
-    if(obj.message) {
-      const p = document.createElement('p');
-      p.textContent = `Message: ${obj.message}`;
-      notification.appendChild(p);
-    }
+  //if message in response, add to screen
+  if(obj.message) {
+    const p = document.createElement('p');
+    p.textContent = `Message: ${obj.message}`;
+    notification.appendChild(p);
+  }
 
-    // if logs in response, add to screen
-    let divCards = document.querySelectorAll("#content div");
-    for(let p = 0; p < divCards.length; p++){
-      divCards[p].parentNode.removeChild(divCards[p]);
-    }
+  // clear created cards (prevents duplicates from being created)
+  let divCards = document.querySelectorAll("#content div");
+  for(let p = 0; p < divCards.length; p++){
+    divCards[p].parentNode.removeChild(divCards[p]);
+  }
 
-    let logOptions = document.querySelectorAll('#totalLogs option')
-    for(let a = 0; a < logOptions.length; a++){
-      logOptions[a].parentNode.removeChild(logOptions[a]);
-    }
+  // clear options before append new options to dropdown select for updating logs
+  let logOptions = document.querySelectorAll('#totalLogs option')
+  for(let a = 0; a < logOptions.length; a++){
+    logOptions[a].parentNode.removeChild(logOptions[a]);
+  }
 
+  // if log exists
   if(destination) {
-    let keys = Object.keys(destination);
-    // console.log("keys", keys)
+    let keys = Object.keys(destination);  // return object keys
 
     for(let i = 0; i < keys.length;i++){
       let attributes = obj.logs[keys[i]]; // returns the structure
-// console.log(attributes.image);
+      // console.log(attributes.image);
 
       // create cards for log entries
       let card = document.createElement('div');
       let cssString = "background: aliceblue; padding: 30px; width: 25%; float: left; margin: 10px;";
       card.style.cssText = cssString;
 
+      // print the attributes for every key
       for(let key in attributes){
         // console.log(key, attributes[key]);
 
+        // if the key is an image, instead of printing the url text string, show the image
         if(key == 'image'){
           var img = document.createElement('img');
           img.style = "width: 250px; height:200px";
           if(img.src = attributes.image){
             card.appendChild(img);
           }    
-        }else{
+        }
+        // show the text strings for everything else
+        else{
           let cardInfo = document.createElement('p');
           cardInfo.style.fontSize = "19px";
           cardInfo.textContent = key.charAt(0).toUpperCase() + key.slice(1) + ": " + attributes[key];
           card.appendChild(cardInfo);
         }
-        // content.appendChild(card);
       }
       content.appendChild(card);   
-      
+    
+      // get the total number of logs added. 
+      // create an option for each log number
+      // append the option to the select element
       let loggedNum = obj.logs[keys[i]].logNum; // returns the logged numbers
       let totalLogsEl = document.querySelector('#totalLogs');
       let logOptions = document.createElement("option");
@@ -65,21 +72,10 @@ const parseJSON = (xhr, notification) => {
       logOptions.value = loggedNum;
       totalLogsEl.appendChild(logOptions);  
     }
-
-    // get total number of saved logs
-    // let totalLogs = keys.length;
-    // let totalLogsEl = document.querySelector('#totalLogs');
-    // for(let j = 0; j < totalLogs;j++){
-    //   // console.log("hello?");
-    //   let logOptions = document.createElement("option");
-    //   logOptions.text = j;
-    //   logOptions.value = j;
-    //   // console.log(logOptions);
-    //   totalLogsEl.appendChild(logOptions);  
-    // }
   }
 };
 
+// handle response requests
 const handleResponse = (xhr, parseResponse) =>{
   const notification = document.querySelector('#notification');
 
@@ -104,6 +100,7 @@ const handleResponse = (xhr, parseResponse) =>{
       break;
   }
   
+  // if true, call parsJSON function 
   if(parseResponse){    
     parseJSON(xhr, notification);
   }
@@ -158,22 +155,24 @@ const sendPost = (e,logForm) =>{
   return false;
 }
 
-  const updatePost = (e,updateLogForm) =>{
-    console.log("update post here");
-    // get logForm action 
-    const nameAction = updateLogForm.getAttribute('action');
-    const nameMethod = updateLogForm.getAttribute('method');  
-    // grab the fields 
-    let logInputs = document.forms['updateLogForm'].getElementsByTagName('input');
-    let logOption = updateLogForm.querySelector('#totalLogs');
-    let selectedLog;
-    if(logOption.options[logOption.selectedIndex].value !== 'undefined'){
-      selectedLog = logOption.options[logOption.selectedIndex].value;
-    }
-  
-    if(!selectedLog){
-      alert("no");
-    }else{
+const updatePost = (e,updateLogForm) =>{
+  console.log("update post here");
+  // get logForm action 
+  const nameAction = updateLogForm.getAttribute('action');
+  const nameMethod = updateLogForm.getAttribute('method');  
+
+  // grab the fields 
+  let logInputs = document.forms['updateLogForm'].getElementsByTagName('input');
+  let logOption = updateLogForm.querySelector('#totalLogs');    // html select element
+//   let selectedLog;
+
+// console.log(logOption.options[logOption.selectedIndex].value);
+
+// logOption.options returning error. select dropdown is not populated until user clicks 'Get Logs'
+  if(!logOption.options[logOption.selectedIndex].value){
+    console.log("not");
+  }else{
+    let selectedLog = logOption.options[logOption.selectedIndex].value;
     // create a new AJAX request 
     const xhr = new XMLHttpRequest();
     // set the method (POST) and url (action attribute from log form)
@@ -185,7 +184,6 @@ const sendPost = (e,logForm) =>{
     xhr.setRequestHeader ('Accept', 'application/json');  
     // set function to handle the response
     xhr.onload = () => handleResponse(xhr, true); 
-    // increment log number everytime addLog is clicked. Does not increment if log # already exists
 
     let formData; 
     for(let i = 0; i < logInputs.length-1; i++){
@@ -199,13 +197,29 @@ const sendPost = (e,logForm) =>{
     //return false to prevent the browser from trying to change page
     return false;
   }
-  };
+};
 
 const requestLog = (e, storedForm) =>{
   const searchSelect = storedForm.querySelector('#searchSelect').value;
+  const specificDestination = storedForm.querySelector('#specificDestination').value;
+
   // crate a new AJAX request
   const xhr = new XMLHttpRequest();
   if(searchSelect == '/allLogs'){
+    xhr.open('GET', searchSelect);
+    xhr.setRequestHeader('Accept', 'application/json');
+    //set onload to parse request and get json message
+    xhr.onload = () => handleResponse(xhr,true);
+    //send ajax request
+    xhr.send();
+    //cancel browser's default action
+    e.preventDefault();
+    //return false to prevent page redirection from a form
+    return false;
+  }
+
+  // create a query string send to ajax and good to go 
+  if(searchSelect == '/destination'){
     xhr.open('GET', searchSelect);
     xhr.setRequestHeader('Accept', 'application/json');
     //set onload to parse request and get json message
