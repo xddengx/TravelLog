@@ -1,31 +1,22 @@
-/* #newSect{
-    float: left;
-    padding: 0px 100px;
-}
-
-#updateLogForm{
-    padding: 0px 100px;
-}
-
-#storedLogs{
-    text-align: center;
-} */
 
 body{
-    font-family: 'Roboto', sans-serif;
-    /* background: linear-gradient(to bottom, #99ccff 0%, #5b97d3 100%); */
     padding: 0;
     margin: 0;
     font-family: 'Barlow', sans-serif;
 }
+
+/* Note to display next to select option box */
 #note{
     display: inline;
     font-size: 12px;
 }
+
+/* Chane the width size of the input */
 input{
     width: 90%;
-    /* border: none; */
 }
+
+/* Stylizing the submit button */
 input[type=submit] {
     background-color: #f1f16d; 
     border: none;
@@ -36,11 +27,13 @@ input[type=submit] {
     font-size: 16px;
 }
 
+/* No background for log num field */
 #logNumField{
     background: none;
     font-size: 14px;
 }
 
+/* Select option box */
 #totalLogs{
     width: 50px;
 }
@@ -70,6 +63,7 @@ input[type=text] {
     width: 25%;
 }
 
+/* CSS Grid */
 #bigContainer{
     width: 100%;
     display: grid;

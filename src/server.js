@@ -28,7 +28,8 @@ const urlStructHEAD = {
 
 // POST
 const handlePost = (request, response, parsedUrl) => {
-  // if post is to /addLog (our only POST url)
+  // if post is to /addLog or /update log 
+  // (update log calls the addLog() too because it handles the update as well)
   if (parsedUrl.pathname === '/addLog' || parsedUrl.pathname === '/updateLog') {
     const res = response;
 
@@ -67,6 +68,7 @@ const handlePost = (request, response, parsedUrl) => {
   }
 };
 
+// GET 
 const onRequest = (request, response) => {
   // parse the url using the url module
   const parsedUrl = url.parse(request.url);

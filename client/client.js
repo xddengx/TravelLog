@@ -1,13 +1,42 @@
 "use strict";
 
+// separate function to create cards
+const createCards = (attributes) =>{
+  // create cards for log entries
+  let card = document.createElement('div');
+  let cssString = "background: aliceblue; padding: 30px; width: 25%; float: left; margin: 10px;";
+  card.style.cssText = cssString;
+
+  // print the attributes for every key
+  for(let key in attributes){
+    // console.log(key, attributes[key]);
+
+    // if the key is an image, instead of printing the url text string, show the image
+    if(key == 'image'){
+      var img = document.createElement('img');
+      img.style = "width: 250px; height:200px";
+      if(img.src = attributes.image){
+        card.appendChild(img);
+      }    
+    }
+
+    // show the text strings for everything else
+    else{
+      let cardInfo = document.createElement('p');
+      cardInfo.style.fontSize = "19px";
+      cardInfo.textContent = key.charAt(0).toUpperCase() + key.slice(1) + ": " + attributes[key];
+      card.appendChild(cardInfo);
+    }
+  }
+  content.appendChild(card); 
+}  
+
 // parse json returned
 const parseJSON = (xhr, notification) => {
-  //parse response (obj will be empty in a 204 updated)
   const obj = JSON.parse(xhr.response);
-  const destination = obj.logs; // return log objects (logs created )
+  const destination = obj.logs;             // return log objects (logs created )
   const theDestinations = obj.searchDest;  // return searched destination objects (get logs - search query)
-  // console.dir(obj);
-  console.dir(theDestinations);
+
 
   // if message in response, add to screen
   if(obj.message) {
@@ -28,31 +57,24 @@ const parseJSON = (xhr, notification) => {
     logOptions[a].parentNode.removeChild(logOptions[a]);
   }
 
-  if(theDestinations){
-    let keys = Object.keys(theDestinations);  // return object keys
-    
-  }
-
-  // if search destination object exists
   let keys;
   let attributes;
+  // if searched destination object exists (displaying specific logs)
   if(theDestinations) {
     keys = Object.keys(theDestinations);  // return object keys
-    console.log(keys);
 
     for(let i = 0; i < keys.length;i++){
       attributes = obj.searchDest[keys[i]]; // returns the structure
-      console.log(attributes);
+      createCards(attributes);
     }
   }
 
+  // if destinations exists (displaying all logs)
   if(destination) {
     keys = Object.keys(destination);  // return object keys
-    console.log(keys);
 
     for(let i = 0; i < keys.length;i++){
       attributes = obj.logs[keys[i]]; // returns the structure
-      // console.log(attributes.image);
 
       // get the total number of logs added. 
       // create an option for each log number
@@ -60,100 +82,13 @@ const parseJSON = (xhr, notification) => {
       let loggedNum = obj.logs[keys[i]].logNum; // returns the logged numbers
       let totalLogsEl = document.querySelector('#totalLogs');
       let logOptions = document.createElement("option");
-      
       logOptions.text = loggedNum;
       logOptions.value = loggedNum;
-      totalLogsEl.appendChild(logOptions);  
+      totalLogsEl.appendChild(logOptions); 
+      
+      createCards(attributes);
     }
   }
-
-
-
-      // create cards for log entries
-      let card = document.createElement('div');
-      let cssString = "background: aliceblue; padding: 30px; width: 25%; float: left; margin: 10px;";
-      card.style.cssText = cssString;
-
-      // print the attributes for every key
-      for(let key in attributes){
-        // console.log(key, attributes[key]);
-
-        // if the key is an image, instead of printing the url text string, show the image
-        if(key == 'image'){
-          var img = document.createElement('img');
-          img.style = "width: 250px; height:200px";
-          if(img.src = attributes.image){
-            card.appendChild(img);
-          }    
-        }
-        // show the text strings for everything else
-        else{
-          let cardInfo = document.createElement('p');
-          cardInfo.style.fontSize = "19px";
-          cardInfo.textContent = key.charAt(0).toUpperCase() + key.slice(1) + ": " + attributes[key];
-          card.appendChild(cardInfo);
-        }
-      }
-      content.appendChild(card); 
-      
-      
-  //   }
-  // }
-
-  // // if log exists
-  // if(destination) {
-  //   let keys = Object.keys(destination);  // return object keys
-  //   console.log(keys);
-
-  //   for(let i = 0; i < keys.length;i++){
-  //     let attributes = obj.logs[keys[i]]; // returns the structure
-  //     // console.log(attributes.image);
-
-  //     // create cards for log entries
-  //     let card = document.createElement('div');
-  //     let cssString = "background: aliceblue; padding: 30px; width: 25%; float: left; margin: 10px;";
-  //     card.style.cssText = cssString;
-
-  //     // print the attributes for every key
-  //     for(let key in attributes){
-  //       // console.log(key, attributes[key]);
-
-  //       // if the key is an image, instead of printing the url text string, show the image
-  //       if(key == 'image'){
-  //         var img = document.createElement('img');
-  //         img.style = "width: 250px; height:200px";
-  //         if(img.src = attributes.image){
-  //           card.appendChild(img);
-  //         }    
-  //       }
-  //       // show the text strings for everything else
-  //       else{
-  //         let cardInfo = document.createElement('p');
-  //         cardInfo.style.fontSize = "19px";
-  //         cardInfo.textContent = key.charAt(0).toUpperCase() + key.slice(1) + ": " + attributes[key];
-  //         card.appendChild(cardInfo);
-  //       }
-  //     }
-  //     content.appendChild(card);   
-    
-      // // get the total number of logs added. 
-      // // create an option for each log number
-      // // append the option to the select element
-      // let loggedNum = obj.logs[keys[i]].logNum; // returns the logged numbers
-      // let totalLogsEl = document.querySelector('#totalLogs');
-      // let logOptions = document.createElement("option");
-      
-      // logOptions.text = loggedNum;
-      // logOptions.value = loggedNum;
-      // totalLogsEl.appendChild(logOptions);  
-  //   }
-  // }
-  
-  // if a specific destination was searched. it returns that specific object
-  // if(obj.message){
-  //   console.log("hello");
-
-  // }
 };
 
 // handle response requests
@@ -164,13 +99,13 @@ const handleResponse = (xhr, parseResponse) =>{
     case 200: // success
     notification.innerHTML = '<b>Success</b>';
       break;
-    case 201: //create
+    case 201: // create
     notification.innerHTML = '<b> Create</b>';
       break;
-    case 204: //update
+    case 204: // update
     notification.innerHTML = '<b> Updated(No Content)</b>';
       return;
-    case 400:
+    case 400: // bad request
     notification.innerHTML = '<b> Bad Request </b>';
       break;
     case 404: //if not found
@@ -211,7 +146,7 @@ const sendPost = (e,logForm) =>{
 
   console.log(!date1(logInputs[1].value));
 
-  // VALIDATION - validating date
+  // VALIDATION - validating date (on hold, regrex not found for dd/mm/yy)
   // if(date1(logInputs[1].value) && date2(logInputs[1].value) &&  date3(logInputs[1].value) && date4(logInputs[1].value) == false){
   //   alert("Enter a valid date");
   // }else{
@@ -224,7 +159,8 @@ const sendPost = (e,logForm) =>{
   // send our request with the data
   xhr.send(formData);
 
-// } // end bracket for validation (if using)
+// } // end bracket for validation (if i decide to include it)
+
   // clear form after data is sent
   document.querySelector("#logForm").reset();
 

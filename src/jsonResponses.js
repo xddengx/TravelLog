@@ -19,19 +19,17 @@ const respondJSONMeta = (request, response, status) => {
 
 // 200 - successful
 const getLog = (request, response) => {
-    
   const jsonResponse = {
     logs,
   };
-
   return respondJSON(request, response, 200, jsonResponse);
 };
 
+// function that handles if a specific destination was searched directly or AJAX
 const searchQuery = (request, response, params) =>{
-  // 
   let keys = Object.keys(logs);
-  // destination through ajax. Get the value of key. parmas returns { destination: 'Maine' }
-  let destination = Object.values(params); // destination = ['Maine'];
+  // destination through ajax. Get the value of key. E.g. parmas returns { destination: 'Maine' }
+  let destination = Object.values(params); // E.g destination = ['Maine'];
   let parseDestination = destination[0];
 
   if(!params.destination){
@@ -42,21 +40,20 @@ const searchQuery = (request, response, params) =>{
     return respondJSON(request, response, 400, jsonResponse);
   }
       
+  // (AJAX) loop through to find the destination in the logs
   for(let b = 0; b < keys.length; b++){
-  
-    // store logs[keys[a]] in a new object
     if(parseDestination === logs[keys[b]].destination){
-      let destNum = Object.values(logs[keys[b]])[b]; //return 1 or the found destNum
+      let destNum = Object.values(logs[keys[b]])[b]; //return the found destNum
 
+      // create an object for the found destination so that it can be returned 
       const searchDest = {};
       searchDest[destNum] = {};
-      // console.dir(searchDest[destNum]);
 
       let destKeys = Object.keys(logs[keys[b]]);  // returns the object of all keys
       let destValues = Object.values(logs[keys[b]]); // returns the object of all values
       
 
-      // KEEP THIS 
+      // loop through every key and value pair and create the searchDest object
       for(let c = 0; c < destKeys.length; c++){
         searchDest[destNum][destKeys[c]] = destValues[c];
       }
@@ -65,16 +62,12 @@ const searchQuery = (request, response, params) =>{
         searchDest,
       }
 
-      // console.dir(searchDest);
       return respondJSON(request, response, 200, jsonResponse);
     }
   }
 
   // direct query search
   for(let a = 0; a < keys.length; a++){
-    // console.dir(logs[keys[a]]);
-    // console.dir(keys[a]);
-    // console.dir(logs[keys[a]].destination);
     // if the destination search is found within the logs return the destination's object
     if(params.destination === logs[keys[a]].destination){
       let jsonResponse = {
@@ -97,7 +90,7 @@ const getLogMeta = (request, response) => {
   respondJSON(request, response, 200);
 };
 
-// POST
+// POST - create a new log
 const addLog = (request, response, body) => {
   const jsonResponse = {
     message: 'Log Number, travel start date and end date, and destination are required.',
@@ -109,9 +102,10 @@ const addLog = (request, response, body) => {
     return respondJSON(request, response, 400, jsonResponse);
   }
 
+  // Created
   let responseCode = 201;
 
-  // && logs[body.endDate] && logs[body.destination]
+  // if log exists already update the log
   if (logs[body.logNum]) {
     responseCode = 204;
   } else {
@@ -130,8 +124,7 @@ const addLog = (request, response, body) => {
   logs[body.logNum].sites = body.sites;
   logs[body.logNum].image = body.image;
 
-  //   console.dir(logs[body.startDate]);
-
+  // if the log was created successfully
   if (responseCode === 201) {
     jsonResponse.message = 'Log Created Successfully';
     return respondJSON(request, response, responseCode, jsonResponse);
