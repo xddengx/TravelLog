@@ -29,84 +29,35 @@ var parseJSON = function parseJSON(xhr, notification) {
     logOptions[a].parentNode.removeChild(logOptions[a]);
   }
 
-  // if log exists
   if (theDestinations) {
-    var keys = Object.keys(theDestinations); // return object keys
+    var _keys = Object.keys(theDestinations); // return object keys
+  }
+
+  // if search destination object exists
+  var keys = void 0;
+  var attributes = void 0;
+  if (theDestinations) {
+    keys = Object.keys(theDestinations); // return object keys
     console.log(keys);
 
     for (var i = 0; i < keys.length; i++) {
-      var attributes = obj.searchDest[keys[i]]; // returns the structure
+      attributes = obj.searchDest[keys[i]]; // returns the structure
       console.log(attributes);
-
-      // create cards for log entries
-      var card = document.createElement('div');
-      var cssString = "background: aliceblue; padding: 30px; width: 25%; float: left; margin: 10px;";
-      card.style.cssText = cssString;
-
-      // print the attributes for every key
-      for (var key in attributes) {
-        // console.log(key, attributes[key]);
-
-        // if the key is an image, instead of printing the url text string, show the image
-        if (key == 'image') {
-          var img = document.createElement('img');
-          img.style = "width: 250px; height:200px";
-          if (img.src = attributes.image) {
-            card.appendChild(img);
-          }
-        }
-        // show the text strings for everything else
-        else {
-            var cardInfo = document.createElement('p');
-            cardInfo.style.fontSize = "19px";
-            cardInfo.textContent = key.charAt(0).toUpperCase() + key.slice(1) + ": " + attributes[key];
-            card.appendChild(cardInfo);
-          }
-      }
-      content.appendChild(card);
     }
   }
 
-  // if log exists
   if (destination) {
-    var _keys = Object.keys(destination); // return object keys
-    console.log(_keys);
+    keys = Object.keys(destination); // return object keys
+    console.log(keys);
 
-    for (var _i = 0; _i < _keys.length; _i++) {
-      var _attributes = obj.logs[_keys[_i]]; // returns the structure
+    for (var _i = 0; _i < keys.length; _i++) {
+      attributes = obj.logs[keys[_i]]; // returns the structure
       // console.log(attributes.image);
-
-      // create cards for log entries
-      var _card = document.createElement('div');
-      var _cssString = "background: aliceblue; padding: 30px; width: 25%; float: left; margin: 10px;";
-      _card.style.cssText = _cssString;
-
-      // print the attributes for every key
-      for (var _key in _attributes) {
-        // console.log(key, attributes[key]);
-
-        // if the key is an image, instead of printing the url text string, show the image
-        if (_key == 'image') {
-          var img = document.createElement('img');
-          img.style = "width: 250px; height:200px";
-          if (img.src = _attributes.image) {
-            _card.appendChild(img);
-          }
-        }
-        // show the text strings for everything else
-        else {
-            var _cardInfo = document.createElement('p');
-            _cardInfo.style.fontSize = "19px";
-            _cardInfo.textContent = _key.charAt(0).toUpperCase() + _key.slice(1) + ": " + _attributes[_key];
-            _card.appendChild(_cardInfo);
-          }
-      }
-      content.appendChild(_card);
 
       // get the total number of logs added. 
       // create an option for each log number
       // append the option to the select element
-      var loggedNum = obj.logs[_keys[_i]].logNum; // returns the logged numbers
+      var loggedNum = obj.logs[keys[_i]].logNum; // returns the logged numbers
       var totalLogsEl = document.querySelector('#totalLogs');
       var _logOptions = document.createElement("option");
 
@@ -115,6 +66,85 @@ var parseJSON = function parseJSON(xhr, notification) {
       totalLogsEl.appendChild(_logOptions);
     }
   }
+
+  // create cards for log entries
+  var card = document.createElement('div');
+  var cssString = "background: aliceblue; padding: 30px; width: 25%; float: left; margin: 10px;";
+  card.style.cssText = cssString;
+
+  // print the attributes for every key
+  for (var key in attributes) {
+    // console.log(key, attributes[key]);
+
+    // if the key is an image, instead of printing the url text string, show the image
+    if (key == 'image') {
+      var img = document.createElement('img');
+      img.style = "width: 250px; height:200px";
+      if (img.src = attributes.image) {
+        card.appendChild(img);
+      }
+    }
+    // show the text strings for everything else
+    else {
+        var cardInfo = document.createElement('p');
+        cardInfo.style.fontSize = "19px";
+        cardInfo.textContent = key.charAt(0).toUpperCase() + key.slice(1) + ": " + attributes[key];
+        card.appendChild(cardInfo);
+      }
+  }
+  content.appendChild(card);
+
+  //   }
+  // }
+
+  // // if log exists
+  // if(destination) {
+  //   let keys = Object.keys(destination);  // return object keys
+  //   console.log(keys);
+
+  //   for(let i = 0; i < keys.length;i++){
+  //     let attributes = obj.logs[keys[i]]; // returns the structure
+  //     // console.log(attributes.image);
+
+  //     // create cards for log entries
+  //     let card = document.createElement('div');
+  //     let cssString = "background: aliceblue; padding: 30px; width: 25%; float: left; margin: 10px;";
+  //     card.style.cssText = cssString;
+
+  //     // print the attributes for every key
+  //     for(let key in attributes){
+  //       // console.log(key, attributes[key]);
+
+  //       // if the key is an image, instead of printing the url text string, show the image
+  //       if(key == 'image'){
+  //         var img = document.createElement('img');
+  //         img.style = "width: 250px; height:200px";
+  //         if(img.src = attributes.image){
+  //           card.appendChild(img);
+  //         }    
+  //       }
+  //       // show the text strings for everything else
+  //       else{
+  //         let cardInfo = document.createElement('p');
+  //         cardInfo.style.fontSize = "19px";
+  //         cardInfo.textContent = key.charAt(0).toUpperCase() + key.slice(1) + ": " + attributes[key];
+  //         card.appendChild(cardInfo);
+  //       }
+  //     }
+  //     content.appendChild(card);   
+
+  // // get the total number of logs added. 
+  // // create an option for each log number
+  // // append the option to the select element
+  // let loggedNum = obj.logs[keys[i]].logNum; // returns the logged numbers
+  // let totalLogsEl = document.querySelector('#totalLogs');
+  // let logOptions = document.createElement("option");
+
+  // logOptions.text = loggedNum;
+  // logOptions.value = loggedNum;
+  // totalLogsEl.appendChild(logOptions);  
+  //   }
+  // }
 
   // if a specific destination was searched. it returns that specific object
   // if(obj.message){
@@ -215,7 +245,6 @@ var sendPost = function sendPost(e, logForm) {
 
 // UPDATE - updating logs if exists
 var updatePost = function updatePost(e, updateLogForm) {
-  console.log("update post here");
   // get logForm action 
   var nameAction = updateLogForm.getAttribute('action');
   var nameMethod = updateLogForm.getAttribute('method');
@@ -223,17 +252,10 @@ var updatePost = function updatePost(e, updateLogForm) {
   var logInputs = document.forms['updateLogForm'].getElementsByTagName('input');
   var logOption = updateLogForm.querySelector('#totalLogs'); // html select element
 
-
-  // NEED TO FIX ORDER OF IF STATEMENTS
   // if logOption does not contain any option elements and the selected index is null
   // alert user to Get Logs and pick a log #
-  if (!logOption.options[logOption.selectedIndex]) {
-    alert("Log Number was not selected. Click on 'Get Logs' with 'All logs' option to  populate selection box with log numbers");
-  }
-
-  // if selected log num is undefined
   if (!logOption.options[logOption.selectedIndex] || !logOption.options[logOption.selectedIndex].value) {
-    alert("test");
+    alert("Log Number was not selected. Click on 'Get Logs' with 'All logs' option to  populate selection box with log numbers.");
   }
 
   if (logOption.options[logOption.selectedIndex] && logOption.options[logOption.selectedIndex].value) {

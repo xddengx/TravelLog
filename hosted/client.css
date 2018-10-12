@@ -54,7 +54,7 @@ select{
     padding: 10px 4px;
 }
 #getLogInput{
-    width: 10%
+    width: 50%
 }
 
 /* stlying the input boxes */
@@ -100,9 +100,8 @@ input[type=text] {
     width: auto;
     display: grid;
     grid-template-areas: 
-        "notification notification"
         "newSect updateSect"
-        "storedLogs storedLogs"
+        "storedLogs notification"
         "content content";
     grid-template-rows:  auto;
     /* column-gap: 40px; */
@@ -114,11 +113,10 @@ input[type=text] {
 
 #notification{
     grid-area: notification;
-    margin: 0px 60px;
+    margin: 20px 60px;
     /* background: rgb(172, 225, 231); */
     background: #f1f16d;
     padding: 6px;
-    width: 30%;
 }
 #newSect{
     grid-area: newSect;

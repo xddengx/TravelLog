@@ -37,7 +37,7 @@ const searchQuery = (request, response, params) =>{
   if(!params.destination){
     let jsonResponse = {
       id: "No param",
-      message: "Parameter not found",
+      message: "Enter a destination. Case-sensitive.",
     }
     return respondJSON(request, response, 400, jsonResponse);
   }
@@ -58,11 +58,6 @@ const searchQuery = (request, response, params) =>{
 
       // KEEP THIS 
       for(let c = 0; c < destKeys.length; c++){
-        parsedDestKeys = destKeys[c];
-        parsedDestValues = destValues[c];
-        // console.dir(parsedDestKeys); // logNum, location
-        // console.dir(parsedDestValues); // 0, maine
-        
         searchDest[destNum][destKeys[c]] = destValues[c];
       }
 
@@ -93,7 +88,7 @@ const searchQuery = (request, response, params) =>{
   // if the destination wasnt found, 400 error
   let jsonResponse = {
     id: "Failed to find log destination",
-    message: "This destination was not found in the logs.",
+    message: "Destination was not found. Case-Sensitive",
   }
   return respondJSON(request, response, 400, jsonResponse);
 };

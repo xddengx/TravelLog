@@ -28,80 +28,32 @@ const parseJSON = (xhr, notification) => {
     logOptions[a].parentNode.removeChild(logOptions[a]);
   }
 
-  // if log exists
-  if(theDestinations) {
+  if(theDestinations){
     let keys = Object.keys(theDestinations);  // return object keys
+    
+  }
+
+  // if search destination object exists
+  let keys;
+  let attributes;
+  if(theDestinations) {
+    keys = Object.keys(theDestinations);  // return object keys
     console.log(keys);
 
     for(let i = 0; i < keys.length;i++){
-      let attributes = obj.searchDest[keys[i]]; // returns the structure
+      attributes = obj.searchDest[keys[i]]; // returns the structure
       console.log(attributes);
-
-      // create cards for log entries
-      let card = document.createElement('div');
-      let cssString = "background: aliceblue; padding: 30px; width: 25%; float: left; margin: 10px;";
-      card.style.cssText = cssString;
-
-      // print the attributes for every key
-      for(let key in attributes){
-        // console.log(key, attributes[key]);
-
-        // if the key is an image, instead of printing the url text string, show the image
-        if(key == 'image'){
-          var img = document.createElement('img');
-          img.style = "width: 250px; height:200px";
-          if(img.src = attributes.image){
-            card.appendChild(img);
-          }    
-        }
-        // show the text strings for everything else
-        else{
-          let cardInfo = document.createElement('p');
-          cardInfo.style.fontSize = "19px";
-          cardInfo.textContent = key.charAt(0).toUpperCase() + key.slice(1) + ": " + attributes[key];
-          card.appendChild(cardInfo);
-        }
-      }
-      content.appendChild(card);   
     }
   }
 
-  // if log exists
   if(destination) {
-    let keys = Object.keys(destination);  // return object keys
+    keys = Object.keys(destination);  // return object keys
     console.log(keys);
 
     for(let i = 0; i < keys.length;i++){
-      let attributes = obj.logs[keys[i]]; // returns the structure
+      attributes = obj.logs[keys[i]]; // returns the structure
       // console.log(attributes.image);
 
-      // create cards for log entries
-      let card = document.createElement('div');
-      let cssString = "background: aliceblue; padding: 30px; width: 25%; float: left; margin: 10px;";
-      card.style.cssText = cssString;
-
-      // print the attributes for every key
-      for(let key in attributes){
-        // console.log(key, attributes[key]);
-
-        // if the key is an image, instead of printing the url text string, show the image
-        if(key == 'image'){
-          var img = document.createElement('img');
-          img.style = "width: 250px; height:200px";
-          if(img.src = attributes.image){
-            card.appendChild(img);
-          }    
-        }
-        // show the text strings for everything else
-        else{
-          let cardInfo = document.createElement('p');
-          cardInfo.style.fontSize = "19px";
-          cardInfo.textContent = key.charAt(0).toUpperCase() + key.slice(1) + ": " + attributes[key];
-          card.appendChild(cardInfo);
-        }
-      }
-      content.appendChild(card);   
-    
       // get the total number of logs added. 
       // create an option for each log number
       // append the option to the select element
@@ -114,6 +66,88 @@ const parseJSON = (xhr, notification) => {
       totalLogsEl.appendChild(logOptions);  
     }
   }
+
+
+
+      // create cards for log entries
+      let card = document.createElement('div');
+      let cssString = "background: aliceblue; padding: 30px; width: 25%; float: left; margin: 10px;";
+      card.style.cssText = cssString;
+
+      // print the attributes for every key
+      for(let key in attributes){
+        // console.log(key, attributes[key]);
+
+        // if the key is an image, instead of printing the url text string, show the image
+        if(key == 'image'){
+          var img = document.createElement('img');
+          img.style = "width: 250px; height:200px";
+          if(img.src = attributes.image){
+            card.appendChild(img);
+          }    
+        }
+        // show the text strings for everything else
+        else{
+          let cardInfo = document.createElement('p');
+          cardInfo.style.fontSize = "19px";
+          cardInfo.textContent = key.charAt(0).toUpperCase() + key.slice(1) + ": " + attributes[key];
+          card.appendChild(cardInfo);
+        }
+      }
+      content.appendChild(card); 
+      
+      
+  //   }
+  // }
+
+  // // if log exists
+  // if(destination) {
+  //   let keys = Object.keys(destination);  // return object keys
+  //   console.log(keys);
+
+  //   for(let i = 0; i < keys.length;i++){
+  //     let attributes = obj.logs[keys[i]]; // returns the structure
+  //     // console.log(attributes.image);
+
+  //     // create cards for log entries
+  //     let card = document.createElement('div');
+  //     let cssString = "background: aliceblue; padding: 30px; width: 25%; float: left; margin: 10px;";
+  //     card.style.cssText = cssString;
+
+  //     // print the attributes for every key
+  //     for(let key in attributes){
+  //       // console.log(key, attributes[key]);
+
+  //       // if the key is an image, instead of printing the url text string, show the image
+  //       if(key == 'image'){
+  //         var img = document.createElement('img');
+  //         img.style = "width: 250px; height:200px";
+  //         if(img.src = attributes.image){
+  //           card.appendChild(img);
+  //         }    
+  //       }
+  //       // show the text strings for everything else
+  //       else{
+  //         let cardInfo = document.createElement('p');
+  //         cardInfo.style.fontSize = "19px";
+  //         cardInfo.textContent = key.charAt(0).toUpperCase() + key.slice(1) + ": " + attributes[key];
+  //         card.appendChild(cardInfo);
+  //       }
+  //     }
+  //     content.appendChild(card);   
+    
+      // // get the total number of logs added. 
+      // // create an option for each log number
+      // // append the option to the select element
+      // let loggedNum = obj.logs[keys[i]].logNum; // returns the logged numbers
+      // let totalLogsEl = document.querySelector('#totalLogs');
+      // let logOptions = document.createElement("option");
+      
+      // logOptions.text = loggedNum;
+      // logOptions.value = loggedNum;
+      // totalLogsEl.appendChild(logOptions);  
+  //   }
+  // }
   
   // if a specific destination was searched. it returns that specific object
   // if(obj.message){
@@ -207,7 +241,6 @@ const sendPost = (e,logForm) =>{
 
 // UPDATE - updating logs if exists
 const updatePost = (e,updateLogForm) =>{
-  console.log("update post here");
   // get logForm action 
   const nameAction = updateLogForm.getAttribute('action');
   const nameMethod = updateLogForm.getAttribute('method');  
@@ -215,17 +248,10 @@ const updatePost = (e,updateLogForm) =>{
   let logInputs = document.forms['updateLogForm'].getElementsByTagName('input');
   let logOption = updateLogForm.querySelector('#totalLogs');    // html select element
 
-
-// NEED TO FIX ORDER OF IF STATEMENTS
 // if logOption does not contain any option elements and the selected index is null
   // alert user to Get Logs and pick a log #
-  if(!logOption.options[logOption.selectedIndex]){
-    alert("Log Number was not selected. Click on 'Get Logs' with 'All logs' option to  populate selection box with log numbers");
-  }
-  
-  // if selected log num is undefined
   if(!logOption.options[logOption.selectedIndex] || !logOption.options[logOption.selectedIndex].value){
-      alert("test");
+    alert("Log Number was not selected. Click on 'Get Logs' with 'All logs' option to  populate selection box with log numbers.");
   }
   
   if(logOption.options[logOption.selectedIndex] && logOption.options[logOption.selectedIndex].value){

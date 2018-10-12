@@ -20,10 +20,6 @@
       </div>
     </div>
     <div class="gridCont">
-      <section id="notification">
-          <h4> User notification</h4>
-      </section>
-      
       <section id="newSect">
         <h3>New Log Entry</h3>
         <form id="logForm" action="/addLog" method="post">
@@ -96,6 +92,10 @@
       
 
       <!--GET LOGS-->
+      <section id="notification">
+        <h4> User notification</h4>
+    </section>
+    
       <section id="storedLogs">
         <h3> Search for previous logs</h3>
           <form id="storedForm" action="/getLog" method="get">
@@ -107,6 +107,8 @@
             <input id = "getLogInput" type="submit" value="Get Logs" />
           </form>
       </section>
+
+    
 
       <section id="content">
       </section>
