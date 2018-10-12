@@ -41,52 +41,51 @@ const searchQuery = (request, response, params) =>{
     }
     return respondJSON(request, response, 400, jsonResponse);
   }
-
-  // direct query search
-  // for(let a = 0; a < keys.length; a++){
-  //   // console.dir(logs[keys[a]]);
-  //   // console.dir(keys[a]);
-  //   // console.dir(logs[keys[a]].destination);
-  //   // if the destination search is found within the logs return the destination's object
-  //   if(params.destination === logs[keys[a]].destination){
-  //     let jsonResponse = {
-  //       message: logs[keys[a]],
-  //     }
-
-  //     return respondJSON(request, response, 200, jsonResponse);
-  //   }
-  // }
-
       
   for(let b = 0; b < keys.length; b++){
-    let destNum = Object.values(logs[keys[b]])[b]; //return 1 or the found destNum
   
     // store logs[keys[a]] in a new object
     if(parseDestination === logs[keys[b]].destination){
-      const destinations = {};
-      destinations[destNum] = {};
+      let destNum = Object.values(logs[keys[b]])[b]; //return 1 or the found destNum
+
+      const searchDest = {};
+      searchDest[destNum] = {};
+      // console.dir(searchDest[destNum]);
 
       let destKeys = Object.keys(logs[keys[b]]);  // returns the object of all keys
       let destValues = Object.values(logs[keys[b]]); // returns the object of all values
       
+
       // KEEP THIS 
       for(let c = 0; c < destKeys.length; c++){
-        // parsedDestKeys = destKeys[c];
-        // parsedDestValues = destValues[c];
-        // console.dir(parsedDestKeys); // length, logNum, etc.
-        // console.dir(parsedDestValues);
-
-        console.dir(destKeys[c]);
-        console.dir(destValues[c]);
-
+        parsedDestKeys = destKeys[c];
+        parsedDestValues = destValues[c];
+        // console.dir(parsedDestKeys); // logNum, location
+        // console.dir(parsedDestValues); // 0, maine
         
-        destinations[destNum].destKeys[c] = destValues[c];  //Cannot set property '0' of undefined
-
+        searchDest[destNum][destKeys[c]] = destValues[c];
       }
 
       let jsonResponse = {
-        destinations,
+        searchDest,
       }
+
+      // console.dir(searchDest);
+      return respondJSON(request, response, 200, jsonResponse);
+    }
+  }
+
+  // direct query search
+  for(let a = 0; a < keys.length; a++){
+    // console.dir(logs[keys[a]]);
+    // console.dir(keys[a]);
+    // console.dir(logs[keys[a]].destination);
+    // if the destination search is found within the logs return the destination's object
+    if(params.destination === logs[keys[a]].destination){
+      let jsonResponse = {
+        message: logs[keys[a]],
+      }
+
       return respondJSON(request, response, 200, jsonResponse);
     }
   }

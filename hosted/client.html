@@ -8,102 +8,112 @@
     <link rel="stylesheet" type="text/css" href="/style.css">
     <script src = "bundle.js"></script>
     <link href="https://fonts.googleapis.com/css?family=Krub|Niramit|Roboto" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Barlow" rel="stylesheet">
 </head>
 <body>
-  <div class="gridCont">
-    <section id="notification">
-        <h4> User notification</h4>
-    </section>
-    
-    <section id="newSect">
-      <h3>New Log Entry</h3>
-      <form id="logForm" action="/addLog" method="post">
-        <label for="logNum">Log number: </label>
-        <input id="logNumField" type="text" name="logNum" value = "0" readonly/>
-        <br>
-        <label for="startDate">Travel Start Date: </label>
-        <input id="startDateField" type="text" name="startDate"/>
-        <br>
-        <label for="endDate">Travel End Date: </label>
-        <input id="endDateField" type="text" name="endDate" />
-        <br>
-        <label for="destination">Destination: </label>
-        <input id="destinationField" type="text" name="destination" />
-        <br>
-        <label for="carrier">Air Carrier: </label>
-        <input id="carrierField" type="text" name="carrier" />
-        <br>
-        <label for="currency">Currency: </label>
-        <input id="currencyField" type="text" name="currency" />
-        <br>
-        <label for="expenses">Total Expenses: </label>
-        <input id="expensesField" type="text" name="expenses" />
-        <br>
-        <label for="sites">Sites Visited: </label>
-        <input id="sitesField" type="text" name="sites" />
-        <br>
-        <label for="image">Image Url: </label>
-        <input id="imageField" type="text" name="image" />
-        <br>
-        <input type="submit" value="Add Log" />
-      </form>
-    </section>
-
-    <!--UPDATE LOGS-->
-    <section id="updateSect">
-      <h3> Update Log Entry</h3>
-      <form id="updateLogForm" action="/updateLog" method="post">
-        <label> Log number: </label>
-          <select id='totalLogs'></select>
-          <p id = "note"> * Click on Get Logs button to refresh count</p>
-        <br>
-        <label for="startDate">Travel Start Date: </label>
-        <input id="startDateField" type="text" name="startDate"/>
-        <br>
-        <label for="endDate">Travel End Date: </label>
-        <input id="endDateField" type="text" name="endDate" />
-        <br>
-        <label for="destination">Destination: </label>
-        <input id="destinationField" type="text" name="destination" />
-        <br>
-        <label for="carrier">Air Carrier: </label>
-        <input id="carrierField" type="text" name="carrier" />
-        <br>
-        <label for="currency">Currency: </label>
-        <input id="currencyField" type="text" name="currency" />
-        <br>
-        <label for="expenses">Total Expenses: </label>
-        <input id="expensesField" type="text" name="expenses" />
-        <br>
-        <label for="sites">Sites Visited: </label>
-        <input id="sitesField" type="text" name="sites" />
-        <br>
-        <label for="image">Image Url: </label>
-        <input id="imageField" type="text" name="image" />
-        <br>
-        <input type="submit" value="Update Log" />
-      </form>
-    </section>
-    
-
-    <!--GET LOGS-->
-    <section id="storedLogs">
-      <h3> Search for previous logs</h3>
-        <form id="storedForm" action="/getLog" method="get">
-          <select id='searchSelect'>
-            <option value='/allLogs'>All logs</option>
-            <option value='/search'>Destination</option>
-          </select>
-          <input id ="specificDestination" type = "text" name="spDestination" placeholder="Destination"/>
-          <input id = "getLogInput" type="submit" value="Get Logs" />
+  <div id = "bigContainer">
+    <div class = "splashCont">
+        <img src="logo.png" stlye="width:40px; height:40px;">
+      <div id = "boxArea">
+        <h1 class = "travelLog">Travel Log</h1>
+        <p> An API to log your past travels. Simple to use and keeps everything organized.</p>
+      </div>
+    </div>
+    <div class="gridCont">
+      <section id="notification">
+          <h4> User notification</h4>
+      </section>
+      
+      <section id="newSect">
+        <h3>New Log Entry</h3>
+        <form id="logForm" action="/addLog" method="post">
+          <label for="logNum">Log number: </label>
+          <input id="logNumField" type="text" name="logNum" value = "0" readonly/>
+          <br>
+          <label for="startDate">Travel Start Date: </label>
+          <input id="startDateField" type="text" name="startDate"/>
+          <br>
+          <label for="endDate">Travel End Date: </label>
+          <input id="endDateField" type="text" name="endDate" />
+          <br>
+          <label for="destination">Destination: </label>
+          <input id="destinationField" type="text" name="destination" />
+          <br>
+          <label for="carrier">Air Carrier: </label>
+          <input id="carrierField" type="text" name="carrier" />
+          <br>
+          <label for="currency">Currency: </label>
+          <input id="currencyField" type="text" name="currency" />
+          <br>
+          <label for="expenses">Total Expenses: </label>
+          <input id="expensesField" type="text" name="expenses" />
+          <br>
+          <label for="sites">Sites Visited: </label>
+          <input id="sitesField" type="text" name="sites" />
+          <br>
+          <label for="image">Image Url: </label>
+          <input id="imageField" type="text" name="image" />
+          <br>
+          <input type="submit" value="Add Log" />
         </form>
-    </section>
+      </section>
 
-    <section id="content">
-    </section>
+      <!--UPDATE LOGS-->
+      <section id="updateSect">
+        <h3> Update Log Entry</h3>
+        <form id="updateLogForm" action="/updateLog" method="post">
+          <label> Log number: </label>
+            <select id='totalLogs'></select>
+            <p id = "note"> * Click on Get Logs button to refresh count</p>
+          <br>
+          <label for="startDate">Travel Start Date: </label>
+          <input id="startDateField" type="text" name="startDate"/>
+          <br>
+          <label for="endDate">Travel End Date: </label>
+          <input id="endDateField" type="text" name="endDate" />
+          <br>
+          <label for="destination">Destination: </label>
+          <input id="destinationField" type="text" name="destination" />
+          <br>
+          <label for="carrier">Air Carrier: </label>
+          <input id="carrierField" type="text" name="carrier" />
+          <br>
+          <label for="currency">Currency: </label>
+          <input id="currencyField" type="text" name="currency" />
+          <br>
+          <label for="expenses">Total Expenses: </label>
+          <input id="expensesField" type="text" name="expenses" />
+          <br>
+          <label for="sites">Sites Visited: </label>
+          <input id="sitesField" type="text" name="sites" />
+          <br>
+          <label for="image">Image Url: </label>
+          <input id="imageField" type="text" name="image" />
+          <br>
+          <input type="submit" value="Update Log" />
+        </form>
+      </section>
+      
 
-    <section id="testing">
-    </section>
+      <!--GET LOGS-->
+      <section id="storedLogs">
+        <h3> Search for previous logs</h3>
+          <form id="storedForm" action="/getLog" method="get">
+            <select id='searchSelect'>
+              <option value='/allLogs'>All logs</option>
+              <option value='/search'>Destination</option>
+            </select>
+            <input id ="specificDestination" type = "text" name="spDestination" placeholder="Destination"/>
+            <input id = "getLogInput" type="submit" value="Get Logs" />
+          </form>
+      </section>
+
+      <section id="content">
+      </section>
+
+      <section id="testing">
+      </section>
+    </div>
   </div>
 </body>
 </html>

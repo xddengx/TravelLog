@@ -4,8 +4,10 @@
 const parseJSON = (xhr, notification) => {
   //parse response (obj will be empty in a 204 updated)
   const obj = JSON.parse(xhr.response);
-  const destination = obj.logs;
-  console.dir(obj);
+  const destination = obj.logs; // return log objects (logs created )
+  const theDestinations = obj.searchDest;  // return searched destination objects (get logs - search query)
+  // console.dir(obj);
+  console.dir(theDestinations);
 
   // if message in response, add to screen
   if(obj.message) {
@@ -27,8 +29,47 @@ const parseJSON = (xhr, notification) => {
   }
 
   // if log exists
+  if(theDestinations) {
+    let keys = Object.keys(theDestinations);  // return object keys
+    console.log(keys);
+
+    for(let i = 0; i < keys.length;i++){
+      let attributes = obj.searchDest[keys[i]]; // returns the structure
+      console.log(attributes);
+
+      // create cards for log entries
+      let card = document.createElement('div');
+      let cssString = "background: aliceblue; padding: 30px; width: 25%; float: left; margin: 10px;";
+      card.style.cssText = cssString;
+
+      // print the attributes for every key
+      for(let key in attributes){
+        // console.log(key, attributes[key]);
+
+        // if the key is an image, instead of printing the url text string, show the image
+        if(key == 'image'){
+          var img = document.createElement('img');
+          img.style = "width: 250px; height:200px";
+          if(img.src = attributes.image){
+            card.appendChild(img);
+          }    
+        }
+        // show the text strings for everything else
+        else{
+          let cardInfo = document.createElement('p');
+          cardInfo.style.fontSize = "19px";
+          cardInfo.textContent = key.charAt(0).toUpperCase() + key.slice(1) + ": " + attributes[key];
+          card.appendChild(cardInfo);
+        }
+      }
+      content.appendChild(card);   
+    }
+  }
+
+  // if log exists
   if(destination) {
     let keys = Object.keys(destination);  // return object keys
+    console.log(keys);
 
     for(let i = 0; i < keys.length;i++){
       let attributes = obj.logs[keys[i]]; // returns the structure
@@ -75,10 +116,10 @@ const parseJSON = (xhr, notification) => {
   }
   
   // if a specific destination was searched. it returns that specific object
-// if(obj.message){
-//   console.log("hello");
+  // if(obj.message){
+  //   console.log("hello");
 
-// }
+  // }
 };
 
 // handle response requests
@@ -86,13 +127,13 @@ const handleResponse = (xhr, parseResponse) =>{
   const notification = document.querySelector('#notification');
 
   switch(xhr.status){
-    case 200:
+    case 200: // success
     notification.innerHTML = '<b>Success</b>';
       break;
-    case 201:
+    case 201: //create
     notification.innerHTML = '<b> Create</b>';
       break;
-    case 204:
+    case 204: //update
     notification.innerHTML = '<b> Updated(No Content)</b>';
       return;
     case 400:
@@ -112,6 +153,7 @@ const handleResponse = (xhr, parseResponse) =>{
   }
 };
 
+// POST - creates a log if successful
 const sendPost = (e,logForm) =>{
   // get logForm action 
   const nameAction = logForm.getAttribute('action');
@@ -133,15 +175,22 @@ const sendPost = (e,logForm) =>{
   // set function to handle the response
   xhr.onload = () => handleResponse(xhr, true); 
 
+  console.log(!date1(logInputs[1].value));
+
+  // VALIDATION - validating date
+  // if(date1(logInputs[1].value) && date2(logInputs[1].value) &&  date3(logInputs[1].value) && date4(logInputs[1].value) == false){
+  //   alert("Enter a valid date");
+  // }else{
+
   let formData; 
   for(let i = 0; i < logInputs.length-1; i++){
     formData = `logNum=${logInputs[0].value}&startDate=${logInputs[1].value}&endDate=${logInputs[2].value}&destination=${logInputs[3].value}&carrier=${logInputs[4].value}&currency=${logInputs[5].value}&expenses=${logInputs[6].value}&sites=${logInputs[7].value}&image=${logInputs[8].value}`;
   }
 
-  console.log("formdata", formData);
   // send our request with the data
   xhr.send(formData);
 
+// } // end bracket for validation (if using)
   // clear form after data is sent
   document.querySelector("#logForm").reset();
 
@@ -156,39 +205,35 @@ const sendPost = (e,logForm) =>{
   return false;
 }
 
+// UPDATE - updating logs if exists
 const updatePost = (e,updateLogForm) =>{
   console.log("update post here");
   // get logForm action 
   const nameAction = updateLogForm.getAttribute('action');
   const nameMethod = updateLogForm.getAttribute('method');  
-
   // grab the fields 
   let logInputs = document.forms['updateLogForm'].getElementsByTagName('input');
   let logOption = updateLogForm.querySelector('#totalLogs');    // html select element
-//   let selectedLog;
 
+
+// NEED TO FIX ORDER OF IF STATEMENTS
 // if logOption does not contain any option elements and the selected index is null
   // alert user to Get Logs and pick a log #
   if(!logOption.options[logOption.selectedIndex]){
-    console.log("here ekf");
-
-    // if selected log num is undefined
-    if(!logOption.options[logOption.selectedIndex].value){
-      console.log("false");
-    }
+    alert("Log Number was not selected. Click on 'Get Logs' with 'All logs' option to  populate selection box with log numbers");
   }
+  
+  // if selected log num is undefined
+  if(!logOption.options[logOption.selectedIndex] || !logOption.options[logOption.selectedIndex].value){
+      alert("test");
+  }
+  
   if(logOption.options[logOption.selectedIndex] && logOption.options[logOption.selectedIndex].value){
       let selectedLog = logOption.options[logOption.selectedIndex].value;
-      // create a new AJAX request 
       const xhr = new XMLHttpRequest();
-      // set the method (POST) and url (action attribute from log form)
       xhr.open(nameMethod, nameAction); 
-      // set request to x-www-form-urlencoded
-      // same format as query string key=value&key2=value2
       xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-      //set our requested response type as JSON response
       xhr.setRequestHeader ('Accept', 'application/json');  
-      // set function to handle the response
       xhr.onload = () => handleResponse(xhr, true); 
 
       let formData; 
@@ -201,14 +246,14 @@ const updatePost = (e,updateLogForm) =>{
 
       // clear form after data is sent
       document.querySelector("#updateLogForm").reset();
-
-      //prevent the browser's default action (to send the form on its own)
+  }
       e.preventDefault();
-      //return false to prevent the browser from trying to change page
       return false;
-    }
+  //   }
 };
 
+
+// GET - retrieve log if exists
 const requestLog = (e, storedForm) =>{
   const searchSelect = storedForm.querySelector('#searchSelect').value;
   const specificDestination = storedForm.querySelector('#specificDestination').value;
@@ -218,16 +263,12 @@ const requestLog = (e, storedForm) =>{
   if(searchSelect == '/allLogs'){
     xhr.open('GET', searchSelect);
     xhr.setRequestHeader('Accept', 'application/json');
-    //set onload to parse request and get json message
     xhr.onload = () => handleResponse(xhr,true);
-    //send ajax request
     xhr.send();
 
     document.querySelector("#storedForm").reset();
 
-    //cancel browser's default action
     e.preventDefault();
-    //return false to prevent page redirection from a form
     return false;
   }
 

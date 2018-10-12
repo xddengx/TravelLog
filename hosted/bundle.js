@@ -5,8 +5,10 @@
 var parseJSON = function parseJSON(xhr, notification) {
   //parse response (obj will be empty in a 204 updated)
   var obj = JSON.parse(xhr.response);
-  var destination = obj.logs;
-  console.dir(obj);
+  var destination = obj.logs; // return log objects (logs created )
+  var theDestinations = obj.searchDest; // return searched destination objects (get logs - search query)
+  // console.dir(obj);
+  console.dir(theDestinations);
 
   // if message in response, add to screen
   if (obj.message) {
@@ -28,12 +30,13 @@ var parseJSON = function parseJSON(xhr, notification) {
   }
 
   // if log exists
-  if (destination) {
-    var keys = Object.keys(destination); // return object keys
+  if (theDestinations) {
+    var keys = Object.keys(theDestinations); // return object keys
+    console.log(keys);
 
     for (var i = 0; i < keys.length; i++) {
-      var attributes = obj.logs[keys[i]]; // returns the structure
-      // console.log(attributes.image);
+      var attributes = obj.searchDest[keys[i]]; // returns the structure
+      console.log(attributes);
 
       // create cards for log entries
       var card = document.createElement('div');
@@ -61,11 +64,49 @@ var parseJSON = function parseJSON(xhr, notification) {
           }
       }
       content.appendChild(card);
+    }
+  }
+
+  // if log exists
+  if (destination) {
+    var _keys = Object.keys(destination); // return object keys
+    console.log(_keys);
+
+    for (var _i = 0; _i < _keys.length; _i++) {
+      var _attributes = obj.logs[_keys[_i]]; // returns the structure
+      // console.log(attributes.image);
+
+      // create cards for log entries
+      var _card = document.createElement('div');
+      var _cssString = "background: aliceblue; padding: 30px; width: 25%; float: left; margin: 10px;";
+      _card.style.cssText = _cssString;
+
+      // print the attributes for every key
+      for (var _key in _attributes) {
+        // console.log(key, attributes[key]);
+
+        // if the key is an image, instead of printing the url text string, show the image
+        if (_key == 'image') {
+          var img = document.createElement('img');
+          img.style = "width: 250px; height:200px";
+          if (img.src = _attributes.image) {
+            _card.appendChild(img);
+          }
+        }
+        // show the text strings for everything else
+        else {
+            var _cardInfo = document.createElement('p');
+            _cardInfo.style.fontSize = "19px";
+            _cardInfo.textContent = _key.charAt(0).toUpperCase() + _key.slice(1) + ": " + _attributes[_key];
+            _card.appendChild(_cardInfo);
+          }
+      }
+      content.appendChild(_card);
 
       // get the total number of logs added. 
       // create an option for each log number
       // append the option to the select element
-      var loggedNum = obj.logs[keys[i]].logNum; // returns the logged numbers
+      var loggedNum = obj.logs[_keys[_i]].logNum; // returns the logged numbers
       var totalLogsEl = document.querySelector('#totalLogs');
       var _logOptions = document.createElement("option");
 
@@ -88,12 +129,15 @@ var handleResponse = function handleResponse(xhr, parseResponse) {
 
   switch (xhr.status) {
     case 200:
+      // success
       notification.innerHTML = '<b>Success</b>';
       break;
     case 201:
+      //create
       notification.innerHTML = '<b> Create</b>';
       break;
     case 204:
+      //update
       notification.innerHTML = '<b> Updated(No Content)</b>';
       return;
     case 400:
@@ -115,6 +159,7 @@ var handleResponse = function handleResponse(xhr, parseResponse) {
   }
 };
 
+// POST - creates a log if successful
 var sendPost = function sendPost(e, logForm) {
   // get logForm action 
   var nameAction = logForm.getAttribute('action');
@@ -138,15 +183,22 @@ var sendPost = function sendPost(e, logForm) {
     return handleResponse(xhr, true);
   };
 
+  console.log(!date1(logInputs[1].value));
+
+  // VALIDATION - validating date
+  // if(date1(logInputs[1].value) && date2(logInputs[1].value) &&  date3(logInputs[1].value) && date4(logInputs[1].value) == false){
+  //   alert("Enter a valid date");
+  // }else{
+
   var formData = void 0;
   for (var i = 0; i < logInputs.length - 1; i++) {
     formData = "logNum=" + logInputs[0].value + "&startDate=" + logInputs[1].value + "&endDate=" + logInputs[2].value + "&destination=" + logInputs[3].value + "&carrier=" + logInputs[4].value + "&currency=" + logInputs[5].value + "&expenses=" + logInputs[6].value + "&sites=" + logInputs[7].value + "&image=" + logInputs[8].value;
   }
 
-  console.log("formdata", formData);
   // send our request with the data
   xhr.send(formData);
 
+  // } // end bracket for validation (if using)
   // clear form after data is sent
   document.querySelector("#logForm").reset();
 
@@ -161,39 +213,35 @@ var sendPost = function sendPost(e, logForm) {
   return false;
 };
 
+// UPDATE - updating logs if exists
 var updatePost = function updatePost(e, updateLogForm) {
   console.log("update post here");
   // get logForm action 
   var nameAction = updateLogForm.getAttribute('action');
   var nameMethod = updateLogForm.getAttribute('method');
-
   // grab the fields 
   var logInputs = document.forms['updateLogForm'].getElementsByTagName('input');
   var logOption = updateLogForm.querySelector('#totalLogs'); // html select element
-  //   let selectedLog;
 
+
+  // NEED TO FIX ORDER OF IF STATEMENTS
   // if logOption does not contain any option elements and the selected index is null
   // alert user to Get Logs and pick a log #
   if (!logOption.options[logOption.selectedIndex]) {
-    console.log("here ekf");
-
-    // if selected log num is undefined
-    if (!logOption.options[logOption.selectedIndex].value) {
-      console.log("false");
-    }
+    alert("Log Number was not selected. Click on 'Get Logs' with 'All logs' option to  populate selection box with log numbers");
   }
+
+  // if selected log num is undefined
+  if (!logOption.options[logOption.selectedIndex] || !logOption.options[logOption.selectedIndex].value) {
+    alert("test");
+  }
+
   if (logOption.options[logOption.selectedIndex] && logOption.options[logOption.selectedIndex].value) {
     var selectedLog = logOption.options[logOption.selectedIndex].value;
-    // create a new AJAX request 
     var xhr = new XMLHttpRequest();
-    // set the method (POST) and url (action attribute from log form)
     xhr.open(nameMethod, nameAction);
-    // set request to x-www-form-urlencoded
-    // same format as query string key=value&key2=value2
     xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-    //set our requested response type as JSON response
     xhr.setRequestHeader('Accept', 'application/json');
-    // set function to handle the response
     xhr.onload = function () {
       return handleResponse(xhr, true);
     };
@@ -208,14 +256,13 @@ var updatePost = function updatePost(e, updateLogForm) {
 
     // clear form after data is sent
     document.querySelector("#updateLogForm").reset();
-
-    //prevent the browser's default action (to send the form on its own)
-    e.preventDefault();
-    //return false to prevent the browser from trying to change page
-    return false;
   }
+  e.preventDefault();
+  return false;
+  //   }
 };
 
+// GET - retrieve log if exists
 var requestLog = function requestLog(e, storedForm) {
   var searchSelect = storedForm.querySelector('#searchSelect').value;
   var specificDestination = storedForm.querySelector('#specificDestination').value;
@@ -225,18 +272,14 @@ var requestLog = function requestLog(e, storedForm) {
   if (searchSelect == '/allLogs') {
     xhr.open('GET', searchSelect);
     xhr.setRequestHeader('Accept', 'application/json');
-    //set onload to parse request and get json message
     xhr.onload = function () {
       return handleResponse(xhr, true);
     };
-    //send ajax request
     xhr.send();
 
     document.querySelector("#storedForm").reset();
 
-    //cancel browser's default action
     e.preventDefault();
-    //return false to prevent page redirection from a form
     return false;
   }
 
@@ -287,7 +330,44 @@ var init = function init() {
 window.onload = init;
 "use strict";
 
-function dateValidation(value) {
-    var reg = "/^(((0?[1-9]|1[012])\/(0?[1-9]|1\d|2[0-8])|(0?[13456789]|1[012])\/(29|30)|(0?[13578]|1[02])\/31)\/(19|[2-9]\d)\d{2}|0?2\/29\/((19|[2-9]\d)(0[48]|[2468][048]|[13579][26])|(([2468][048]|[3579][26])00)))$/";
-    return value.match(reg);
+//date including leap years since 1900 mm and dd could have 1 or 2 digits with 4 digit year and / separator
+function date1(value) {
+    var reg = new RegExp("/^(((0?[1-9]|1[012])\/(0?[1-9]|1\d|2[0-8])|(0?[13456789]|1[012])\/(29|30)|(0?[13578]|1[02])\/31)\/(19|[2-9]\d)\d{2}|0?2\/29\/((19|[2-9]\d)(0[48]|[2468][048]|[13579][26])|(([2468][048]|[3579][26])00)))$/");
+
+    return reg.test(value);
+}
+
+// Date with leap years. Accepts '.' '-' and '/' as separators d.m.yy to dd.mm.yyyy (or d.mm.yy, etc) 
+//Ex: dd-mm-yyyy d.mm/yy dd/m.yyyy etc etc Accept 00 years also.
+function date2(value) {
+    var reg = new RegExp("/^((((0?[1-9]|[12]\d|3[01])[\.\-\/](0?[13578]|1[02])[\.\-\/]((1[6-9]|[2-9]\d)?\d{2}))|((0?[1-9]|[12]\d|30)[\.\-\/](0?[13456789]|1[012])[\.\-\/]((1[6-9]|[2-9]\d)?\d{2}))|((0?[1-9]|1\d|2[0-8])[\.\-\/]0?2[\.\-\/]((1[6-9]|[2-9]\d)?\d{2}))|(29[\.\-\/]0?2[\.\-\/]((1[6-9]|[2-9]\d)?(0[48]|[2468][048]|[13579][26])|((16|[2468][048]|[3579][26])00)|00)))|(((0[1-9]|[12]\d|3[01])(0[13578]|1[02])((1[6-9]|[2-9]\d)?\d{2}))|((0[1-9]|[12]\d|30)(0[13456789]|1[012])((1[6-9]|[2-9]\d)?\d{2}))|((0[1-9]|1\d|2[0-8])02((1[6-9]|[2-9]\d)?\d{2}))|(2902((1[6-9]|[2-9]\d)?(0[48]|[2468][048]|[13579][26])|((16|[2468][048]|[3579][26])00)|00))))$/");
+
+    return reg.test(value);
+}
+
+// mm/dd/yyyy format
+function date3(value) {
+    var reg = new RegExp(/(0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])[- \/.](19|20)\d\d/);
+
+    return reg.test(value);
+}
+
+// mm-dd-yyyy
+function date4(value) {
+    var reg = new RegExp("/(0[1-9]|[12][0-9]|3[01])[- \/.](0[1-9]|1[012])[- \/.](19|20)\d\d/");
+
+    return reg.test(value);
+}
+
+// check image url
+function imageValid(value) {
+    var reg = new RegExp('/(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|gif|png/g');
+
+    return reg.test(value);
+}
+
+function testing(value) {
+    var reg = new RegExp("/^[A-Za-z0-9]+$/");
+
+    return reg.test(value);
 }

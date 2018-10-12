@@ -13,7 +13,10 @@
 
 body{
     font-family: 'Roboto', sans-serif;
-    background: linear-gradient(to bottom, #99ccff 0%, #5b97d3 100%);
+    /* background: linear-gradient(to bottom, #99ccff 0%, #5b97d3 100%); */
+    padding: 0;
+    margin: 0;
+    font-family: 'Barlow', sans-serif;
 }
 #note{
     display: inline;
@@ -21,12 +24,11 @@ body{
 }
 input{
     width: 90%;
-    border: none;
+    /* border: none; */
 }
 input[type=submit] {
-    background-color: #904672; 
+    background-color: #f1f16d; 
     border: none;
-    color: white;
     padding: 10px;
     text-align: center;
     text-decoration: none;
@@ -68,6 +70,32 @@ input[type=text] {
     width: 25%;
 }
 
+#bigContainer{
+    width: 100%;
+    display: grid;
+    grid-template-areas: 
+        "splashCont"
+        "gridCont";
+    grid-template-rows:  1fr;
+    grid-template-columns: 1fr;
+}
+
+.splashCont{
+    /* Create the parallax scrolling effect */
+    height: 100vh;
+    background-image: url("berlin.jpeg");
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.splashCont img{
+    width: 100px;
+    /* float: right; */
+    padding: 10px 20px;
+}
+
 .gridCont{
     width: auto;
     display: grid;
@@ -79,13 +107,16 @@ input[type=text] {
     grid-template-rows:  auto;
     /* column-gap: 40px; */
     grid-template-columns: 0.5fr 0.5fr;
+
+    padding-top: 50px;
+    background-color: #fafafa;
 }
 
 #notification{
     grid-area: notification;
     margin: 0px 60px;
-    border: 2px solid black;
-    background: rgb(123, 192, 219);
+    /* background: rgb(172, 225, 231); */
+    background: #f1f16d;
     padding: 6px;
     width: 30%;
 }
@@ -105,6 +136,29 @@ input[type=text] {
 #content{
     grid-area: content;
     margin: 0px 15px;
+}
+
+/* styling the splash screen */
+.travelLog{
+    font-size: 60px;
+}
+
+#boxArea{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 50%;
+
+    /* creating a transparent background making text easier to read */
+    background: #e5e3e3ad;
+    padding: 10px 70px;
+    text-align: center;
+    font-family: 'Barlow', sans-serif;
+}
+
+#boxArea p{
+    font-size: 30px;
 }
 
 

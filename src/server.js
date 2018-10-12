@@ -14,6 +14,8 @@ const urlStructGET = {
   '/search': jsonHandler.searchQuery,
   '/notReal': jsonHandler.notFound,
   '/bundle.js': htmlHandler.getBundle,
+  '/logo.png': htmlHandler.getImage,
+  '/berlin.jpeg': htmlHandler.getBerlin,
   notFound: jsonHandler.notFound,
 };
 
